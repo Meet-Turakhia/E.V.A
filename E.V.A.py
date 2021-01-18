@@ -1,4 +1,5 @@
 import os
+import pyowm
 import pyjokes
 import pyttsx3
 import smtplib
@@ -12,7 +13,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pyaudio
-
+import requests
+import json
 
 # p = pyaudio.PyAudio()
 # info = p.get_host_api_info_by_index(0)
@@ -238,4 +240,38 @@ if __name__ == "__main__":
             # print(top_headlines)
             # general q&a's
 
+        elif "weather" in query:
+            # importing requests and json
+            # base URL
+            BASE_URL = "https://api.openweathermap.org/data/2.5/weather?"
+            speak("can you tell me your city")
+            city = takeCommand().lower()
+            CITY = city
+            API_KEY = "0bf38d2b96e61d5bad3139a0b8f5f6f6"
+            # upadting the URL
+            URL = BASE_URL + "q=" + CITY + "&appid=" + API_KEY
+            # HTTP request
+            response = requests.get(URL)
+            # checking the status code of the request
+            if response.status_code == 200:
+            # getting data in the json format
+                data = response.json()
+                # getting the main dict block
+                main = data['main']
+                # getting temperature
+                temperature = main['temp']
+                # getting the humidity
+                humidity = main['humidity']
+                # getting the pressure
+                pressure = main['pressure']
+                # weather report
+                report = data['weather']
+                print(f"{CITY:-^30}")
+                print(f"Temperature: {temperature}")
+                print(f"Humidity: {humidity}")
+                print(f"Pressure: {pressure}")
+                print(f"Weather Report: {report[0]['description']}")
+            else:
+            # showing the error message
+                print("Error in the HTTP request")
 #
