@@ -89,6 +89,8 @@ if __name__ == "__main__":
 
         # logic for executing task based on query
 
+        #search queries
+
         if "wikipedia" in query:
             print("Searching Wikipedia.../")
             speak("searching wikipedia...")
@@ -99,6 +101,8 @@ if __name__ == "__main__":
             print(results)
             speak(results)
 
+        #open queries
+
         elif "open youtube" in query:
             webbrowser.open("youtube.com")
 
@@ -107,6 +111,11 @@ if __name__ == "__main__":
 
         elif "open stackoverflow" in query:
             webbrowser.open("stackoverflow.com")
+
+        elif "open wikipedia" in query:
+            webbrowser.open("wikipedia.com")
+
+        #task queries
 
         elif "play music" in query:
             print("E.V.A: Which music shall i play? <-")
@@ -149,3 +158,5 @@ if __name__ == "__main__":
             joke = pyjokes.get_joke(language = "en", category = "all")
             print(f"Eva: Here is one, {joke} <-")
             speak(f"here is one, {joke}")
+
+        #general q&a's
