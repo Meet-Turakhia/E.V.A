@@ -63,7 +63,7 @@ def wishMe():
     elif hour >= 18 and hour < 21:
         print("E.V.A: Good Evening! <-")
         speak("good evening")
-    print("E.V.A: I am E.V.A, how may I help you today? <-")
+    print("E.V.A: Hello I am E.V.A, how may I help you today? <-")
     speak("hello i am eva, how may i help you today")
 
 
@@ -150,9 +150,8 @@ if __name__ == "__main__":
             print(f"E.V.A: Opening{query}.../ <-")
             try:
                 webbrowser.open(f"{query}.com")
-                print(f"{query}.com")
             except Exception as e:
-                speak("sorry could not get that, can you respell")
+                speak("sorry could not get that, can you please repeat")
 
         # -----------------------------------------------------------------------------------task queries
 
