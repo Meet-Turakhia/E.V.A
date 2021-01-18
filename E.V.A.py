@@ -15,6 +15,10 @@ from selenium.webdriver.support import expected_conditions as EC
 import pyaudio
 import requests
 import json
+from goodreads_quotes import Goodreads
+from quote import quote
+from quotes import Quotes
+import wikiquote
 
 # p = pyaudio.PyAudio()
 # info = p.get_host_api_info_by_index(0)
@@ -282,5 +286,19 @@ if __name__ == "__main__":
             else:
                 # showing the error message
                 print("Error in the HTTP request")
+
+        elif "quote" in query or "quotes" in query:
+            # print("E.V.A: Quote of the day is:.../ <-")
+            # speak("quote of the day is")
+            # quote = wikiquote.quote_of_the_day()
+            # print(quote)
+            # speak(quote)
+            print("E.V.A: Which personality's quote would you like to hear? <-")
+            speak("which personality's quote would you like to hear")
+            # personality = takeCommand().lower()
+            quote = wikiquote.quotes(page_title="Bill Gates", max_quotes=1)
+            print(quote)
+            speak(quote)
+
 
 #
