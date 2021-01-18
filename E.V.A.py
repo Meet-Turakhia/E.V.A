@@ -71,11 +71,11 @@ def wishMe():
 
 
 def sendEmail(to, content):
-    server = smtplib.smtp("smtp.gmail.com", 587)
+    server = smtplib.SMTP("smtp.gmail.com", 587)
     server.ehlo()
     server.starttls()
-    server.login("your email address", "your password")
-    server.sendmail("your email address", to, content)
+    server.login("evamachine94@gmail.com", "E.V.A.machine@69")
+    server.sendmail("evamachine94@gmail.com", to, content)
     server.close()
 
 
@@ -177,9 +177,8 @@ if __name__ == "__main__":
 
         elif "send email" in query:
             try:
-                print("E.V.A: On what email address should i send? <-")
-                speak("on what email address should i send")
-                to = takeCommand().lower()
+                speak("please enter reciepents email address")
+                to = input("E.V.A: Please enter the address:")
                 print("E.V.A: What should i write? <-")
                 speak("what should i write")
                 content = takeCommand().lower()
@@ -283,4 +282,5 @@ if __name__ == "__main__":
             else:
                 # showing the error message
                 print("Error in the HTTP request")
+
 #
