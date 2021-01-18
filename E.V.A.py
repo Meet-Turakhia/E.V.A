@@ -254,7 +254,7 @@ if __name__ == "__main__":
             response = requests.get(URL)
             # checking the status code of the request
             if response.status_code == 200:
-            # getting data in the json format
+                # getting data in the json format
                 data = response.json()
                 # getting the main dict block
                 main = data['main']
@@ -267,11 +267,20 @@ if __name__ == "__main__":
                 # weather report
                 report = data['weather']
                 print(f"{CITY:-^30}")
-                print(f"Temperature: {temperature}")
+                print(f"Temperature: {temperature-273.15}")
                 print(f"Humidity: {humidity}")
                 print(f"Pressure: {pressure}")
                 print(f"Weather Report: {report[0]['description']}")
+                description = data["weather"]
+                description = data["main"]
+                speak(
+                    f"temperature is {round(temperature-273.15)} degree celcius")
+                speak(
+                    f"humidity in your city is {humidity} percent")
+                speak(f"pressure in your city is {pressure} pascal")
+                speak(f"the weather in your city is {report[0]['main']}")
+
             else:
-            # showing the error message
+                # showing the error message
                 print("Error in the HTTP request")
 #
