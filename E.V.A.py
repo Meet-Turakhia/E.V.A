@@ -7,6 +7,7 @@ import wikipedia
 import webbrowser
 from selenium import webdriver
 import speech_recognition as sr
+from newsapi import NewsApiClient
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -168,11 +169,6 @@ if __name__ == "__main__":
         # elif "stop music" in query:
         #     driver.close()
 
-        elif "time" in query:
-            strTime = datetime.datetime.now().strftime("%H:%M:%S")
-            print(f"E.V.A: The time is {strTime} <-")
-            speak(f"the time is {strTime}")
-
         elif "open visual studio" in query:
             codePath = "C:\\Users\\Meet\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
             os.startfile(codePath)
@@ -192,9 +188,54 @@ if __name__ == "__main__":
                 print("E.V.A: Sorry, not able to send the email, please try again! <-")
                 speak("sorry, not able to send the email, please try again")
 
+        # --------------------------------------------------------------------------------------------tell me queries
+
         elif "joke" in query:
             joke = pyjokes.get_joke(language="en", category="all")
             print(f"Eva: Here is one, {joke} <-")
             speak(f"here is one, {joke}")
 
-        # general q&a's
+        elif "time" in query:
+            strTime = datetime.datetime.now().strftime("%H:%M:%S")
+            print(f"E.V.A: The time is {strTime} <-")
+            speak(f"the time is {strTime}")
+
+        elif "news" in query:
+            # Init
+            newsapi = NewsApiClient(api_key='dc60827e1a6140978812a8aec5504293')
+
+            # /v2/top-headlines
+            top_headlines = newsapi.get_top_headlines(
+                language='en', country='in')
+
+            print("E.V.A: Here are some latest news headlines <-")
+            speak("here are some latest news headlines")
+            for news in top_headlines["articles"]:
+                title = news["title"]
+                print(title)
+                speak(title)
+
+            # /v2/everything
+            # all_articles = newsapi.get_everything(q='bitcoin',
+            #                                     sources='bbc-news,the-verge',
+            #                                     domains='bbc.co.uk,techcrunch.com',
+            #                                     from_param='2017-12-01',
+            #                                     to='2017-12-12',
+            #                                     language='en',
+            #                                     sort_by='relevancy',
+            #                                     page=2)
+
+            # all_articles = newsapi.get_everything(sources='bbc-news,the-verge',
+            #                                       domains='bbc.co.uk,techcrunch.com',
+            #                                       from_param='2021-01-01',
+            #                                       to='2021-01-12',
+            #                                       language='en',
+            #                                       sort_by='relevancy',
+            #                                       page=2)
+
+            # /v2/sources
+            sources = newsapi.get_sources()
+            # print(top_headlines)
+            # general q&a's
+
+#
