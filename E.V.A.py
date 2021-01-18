@@ -39,15 +39,15 @@ def takeCommand():
     with sr.Microphone(1) as source:
         print("Listening.../")
         r.pause_threshold = 1
-        r.adjust_for_ambient_noise(source)
-        audio = r.listen(source)
+        r.adjust_for_ambient_noise(source, duration=1)
+        audio = r.listen(source, phrase_time_limit=5)
     try:
         print("Recognizing.../")
         query = r.recognize_google(audio, language="en-in")
         print(f"You: {query} <-")
     except Exception as e:
-        print("E.V.A: Sorry could not catch that, can you rephrase please?")
-        speak("sorry could not catch that, can you rephrase please")
+        # print("E.V.A: Sorry could not catch that, can you rephrase please?")
+        # speak("sorry could not catch that, can you rephrase please")
         return "None"
     return query
 
@@ -89,10 +89,10 @@ if __name__ == "__main__":
 
         # logic for executing task based on query
 
-        #search queries
+        # ----------------------------------------------------------------------------------search queries
 
         if "wikipedia" in query:
-            print("Searching Wikipedia.../")
+            print("E.V.A: Searching Wikipedia.../ <-")
             speak("searching wikipedia...")
             query = query.replace("wikipedia", "")
             results = wikipedia.summary(query, sentences=2)
@@ -101,21 +101,60 @@ if __name__ == "__main__":
             print(results)
             speak(results)
 
-        #open queries
-
-        elif "open youtube" in query:
-            webbrowser.open("youtube.com")
+        # -----------------------------------------------------------------------------------open queries
 
         elif "open google" in query:
+            speak("opening google")
+            print("E.V.A: Opening Google.../ <-")
             webbrowser.open("google.com")
 
+        elif "open youtube" in query:
+            speak("opening youtube")
+            print("E.V.A: Opening Youtube.../ <-")
+            webbrowser.open("youtube.com")
+
         elif "open stackoverflow" in query:
+            speak("opening stackoverflow")
+            print("E.V.A: Opening Stackoverflow.../ <-")
             webbrowser.open("stackoverflow.com")
 
         elif "open wikipedia" in query:
+            speak("opening wikipedia")
+            print("E.V.A: Opening Wikipedia.../ <-")
             webbrowser.open("wikipedia.com")
 
-        #task queries
+        elif "open instagram" in query:
+            speak("opening instagram")
+            print("E.V.A: Opening Instagram.../ <-")
+            webbrowser.open("instagram.com")
+
+        elif "open twitter" in query:
+            speak("opening twitter")
+            print("E.V.A: Opening Twitter.../ <-")
+            webbrowser.open("twitter.com")
+
+        elif "open whatsapp" in query:
+            speak("opening whatsapp")
+            print("E.V.A: Opening WhatsApp.../ <-")
+            webbrowser.open("whatsapp.com")
+
+        elif "open facebook" in query:
+            speak("opening facebook")
+            print("E.V.A: Opening Facebook.../ <-")
+            webbrowser.open("facebook.com")
+
+        elif "open" in query:
+            query = query.replace("open", "")
+            query = query.replace(" ", "")
+            speak(f"opening {query}")
+            print(f"E.V.A: Opening{query}.../ <-")
+            try:
+                webbrowser.open(f"{query}.com")
+                print(f"{query}.com")
+            except Exception as e:
+                speak("sorry could not get that, can you respell")
+
+        # -----------------------------------------------------------------------------------task queries
 
         elif "play music" in query:
             print("E.V.A: Which music shall i play? <-")
@@ -155,8 +194,8 @@ if __name__ == "__main__":
                 speak("sorry, not able to send the email, please try again")
 
         elif "joke" in query:
-            joke = pyjokes.get_joke(language = "en", category = "all")
+            joke = pyjokes.get_joke(language="en", category="all")
             print(f"Eva: Here is one, {joke} <-")
             speak(f"here is one, {joke}")
 
-        #general q&a's
+        # general q&a's
