@@ -19,6 +19,14 @@ from goodreads_quotes import Goodreads
 from quote import quote
 from quotes import Quotes
 import wikiquote
+import plyer
+import schedule
+import datetime
+import winshell
+import psutil
+import platform
+import screen_brightness_control as sbc
+import re
 
 # p = pyaudio.PyAudio()
 # info = p.get_host_api_info_by_index(0)
@@ -81,6 +89,16 @@ def sendEmail(to, content):
     server.login("evamachine94@gmail.com", "E.V.A.machine@69")
     server.sendmail("evamachine94@gmail.com", to, content)
     server.close()
+
+
+def reminder(title, message):
+
+    plyer.notification.notify(
+        title=title,
+        message=message,
+        app_icon="assets\evalogo.ico",
+        timeout=None
+    )
 
 
 if __name__ == "__main__":
@@ -299,6 +317,83 @@ if __name__ == "__main__":
             quote = wikiquote.quotes(page_title="Bill Gates", max_quotes=1)
             print(quote)
             speak(quote)
+
+        elif "reminder" in query:
+
+            print("E.V.A: Ok, what should be the title of the reminder? <-")
+            speak("ok, what should be the title of the reminder")
+
+            title = takeCommand().lower()
+
+            print("E.V.A: Ok, and what message should I add? <-")
+            speak("ok, and what message should I add")
+
+            message = takeCommand().lower()
+
+            print(
+                f"E.V.A: Got it, when do you wanna get reminded for {title}? <-")
+            speak(f"got it, when do you wanna get reminded for {title}")
+
+            # time = takeCommand().lower()
+            # time = datetime.datetime.strptime(time, "%H:%M:%S")
+            time = int(input("enter time: "))
+
+            schedule.every(time).seconds.do(reminder, title, message)
+            schedule.run_pending()
+
+            # --------------------------------------------------------------------------os_commamds
+
+        elif "empty recycle bin" in query:
+            print("E.V.A: Are you sure you want me to empty recycle bin? <-")
+            speak("are you sure you want me to empty recycle bin")
+            input = takeCommand().lower()
+            if input == "no":
+                print("E.V.A: Ok, aborting the process <-")
+                speak("ok, aborting the process")
+            else:
+                winshell.recycle_bin().empty(confirm=False, show_progress=False, sound=False)
+                print("E.V.A: Recycle bin is emptied! <-")
+                speak("recycle bin is emptied")
+
+        elif "battery" in query:
+            battery = psutil.sensors_battery()
+            plugged = battery.power_plugged
+            percent = str(battery.percent)
+            plugged = "Plugged In" if plugged else "Not Plugged In"
+            print(percent+'% | '+plugged)
+            speak(f"the battery percentage is {percent}, the battery is curretly {plugged}")
+            if int(percent) <= 15 and plugged != "Plugged In":
+                print("E.V.A: Please charge the system <-")
+                speak("please charge the system")
+
+        elif "system specifications" in query:
+            print("E.V.A: Here are the system specifications <-")
+            speak("Here are the system specifications")
+            print(platform.processor())
+            speak(f"the processor is {platform.processor()}")
+            print(platform.version())
+            speak(f"the version is {platform.version()}")
+            print(platform.platform())
+            speak(f"the platform is {platform.platform()}")
+            print(platform.machine())
+            speak(f"the machine is {platform.machine()}")
+            print(platform.system())
+            speak(f"the system is {platform.system()}")
+
+        elif "brightness" in query:
+            print("E.V.A: What percent of brightness should i set it at? <-")
+            speak("What percent of brightness should i set it at")
+            percent = takeCommand().lower()
+            percent = re.findall("\d+", percent)
+            percent = percent[0]
+            percent = int(percent)
+            sbc.set_brightness(percent)
+            print(f"E.V.A: Changed the brightness to {percent} percent <-")
+            speak(f"changed the brightness to {percent} percent")
+
+            
+
+
 
 
 #
