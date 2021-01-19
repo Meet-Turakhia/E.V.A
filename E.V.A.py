@@ -28,7 +28,7 @@ import platform
 import screen_brightness_control as sbc
 import re
 import time
-import cv2 
+import cv2
 
 # p = pyaudio.PyAudio()
 # info = p.get_host_api_info_by_index(0)
@@ -429,7 +429,6 @@ if __name__ == "__main__":
                 speak("ok restarting the system")
                 os.system("shutdown /r")
 
-    
         elif "camera" in query:
             cam = cv2.VideoCapture(0)
 
@@ -459,8 +458,6 @@ if __name__ == "__main__":
             cam.release()
 
             cv2.destroyAllWindows()
-
-
 
 
 #
