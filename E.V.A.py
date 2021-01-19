@@ -27,6 +27,8 @@ import psutil
 import platform
 import screen_brightness_control as sbc
 import re
+import time
+import cv2 
 
 # p = pyaudio.PyAudio()
 # info = p.get_host_api_info_by_index(0)
@@ -361,7 +363,8 @@ if __name__ == "__main__":
             percent = str(battery.percent)
             plugged = "Plugged In" if plugged else "Not Plugged In"
             print(percent+'% | '+plugged)
-            speak(f"the battery percentage is {percent}, the battery is curretly {plugged}")
+            speak(
+                f"the battery percentage is {percent}, the battery is curretly {plugged}")
             if int(percent) <= 15 and plugged != "Plugged In":
                 print("E.V.A: Please charge the system <-")
                 speak("please charge the system")
@@ -391,7 +394,71 @@ if __name__ == "__main__":
             print(f"E.V.A: Changed the brightness to {percent} percent <-")
             speak(f"changed the brightness to {percent} percent")
 
-            
+        elif "freeze" in query:
+            print("E.V.A: For how many minutes do you want me to freeze the system?")
+            speak("for how many minutes do you want me to freeze the system")
+            input = takeCommand().lower()
+            period = re.findall("\d+", input)
+            period = period[0]
+            period = int(period)
+            print(f"E.V.A: Ok, got it freezing the system for {input}")
+            speak(f"ok got it freezing the system for {input}")
+            time.sleep(period*60)
+
+        elif "shutdown" in query:
+            print("E.V.A: Are you sure you want me to shut down the system? <-")
+            speak("are you sure you want me to shutdown the system")
+            input = takeCommand().lower()
+            if input == "no":
+                print("E.V.A: Ok, aborting the process <-")
+                speak("ok, aborting the process")
+            else:
+                print("E.V.A: Ok shutting down the system! <-")
+                speak("ok shutting down the system")
+                os.system("shutdown /s")
+
+        elif "restart" in query:
+            print("E.V.A: Are you sure you want me to restart the system? <-")
+            speak("are you sure you want me to restart the system")
+            input = takeCommand().lower()
+            if input == "no":
+                print("E.V.A: Ok, aborting the process <-")
+                speak("ok, aborting the process")
+            else:
+                print("E.V.A: Ok restarting the system! <-")
+                speak("ok restarting the system")
+                os.system("shutdown /r")
+
+    
+        elif "camera" in query:
+            cam = cv2.VideoCapture(0)
+
+            cv2.namedWindow("test")
+
+            img_counter = 0
+
+            while True:
+                ret, frame = cam.read()
+                if not ret:
+                    print("failed to grab frame")
+                    break
+                cv2.imshow("test", frame)
+
+                k = cv2.waitKey(1)
+                if k % 256 == 27:
+                    # ESC pressed
+                    print("Escape hit, closing...")
+                    break
+                elif k % 256 == 32:
+                    # SPACE pressed
+                    img_name = "opencv_frame_{}.png".format(img_counter)
+                    cv2.imwrite(img_name, frame)
+                    print("{} written!".format(img_name))
+                    img_counter += 1
+
+            cam.release()
+
+            cv2.destroyAllWindows()
 
 
 
