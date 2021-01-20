@@ -561,7 +561,7 @@ if __name__ == "__main__":
             print(
                 f"E.V.A: Feeling brave are'nt we? let me see if I can search one.../ <-")
             speak("feeling brave arent we, let me see if i can search one")
-            print(f"E.V.A: Oh here you go, {p} <-")
-            speak(f"oh here you go, {p}")
+            print(f"E.V.A: Oh here you go, {pl} <-")
+            speak(f"oh here you go, {pl}")
 
             #
