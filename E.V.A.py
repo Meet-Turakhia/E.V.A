@@ -459,5 +459,49 @@ if __name__ == "__main__":
 
             cv2.destroyAllWindows()
 
+        #-----------------------------------------------------------------------------general qna's
+
+        elif "hi" in query or "hello" in query or "whatsup" in query:
+            print("E.V.A: Hey there, what can i do for you? 😃 <-")
+            speak("hey there, what can i do for you")
+
+        elif "be my girlfriend" in query or "be my boyfriend" in query:
+            print("E.V.A: The only thing I feel strong connection to is the WiFi 😉 <-")
+            speak("the only thing i feel strong connection to is the wifi")
+
+        elif "when you were born" in query or "your birthday" in query or "your birthdate" in query:
+            print("E.V.A: I dont remember much, but I think I was created in 2021 <-")
+            speak("i dont remember much, but i think i was created in 2021")
+
+        elif "your parents" in query or "who created you" in query or "your creator" in query or "your inventor" in query or "invented you" in query:
+            print("I was created by ")
+            speak("i was created by")
+
+        elif "how are you" in query:
+            print("E.V.A: I am fine, thank you for caring! 🙂 <-")
+            speak("i am fine, thank you for caring")
+
+        elif "i love you" in query:
+            print("E.V.A: You have an excellent taste! 😎 <-")
+            speak("you have an excellent taste")
+
+        elif "eva" in query:
+            print("E.V.A: Excellent Voice Assistant at your service!")
+            speak("excellent voice assistant at your service")
+
+        elif "what's your name" in query:
+            print("E.V.A: My name is Madam E.V.A but you can call me just eva 😉 <-")
+            speak("my name is madam eva but you can call me just eva")
+
+        elif "who made you" in query:
+            print("E.V.A: I was created by Meet and Saish <-")
+            speak("i was created by meet and saish")
+
+        elif "who am i" in query:
+            print("E.V.A: A human for sure! <-")
+            speak("a human for sure")
+            
+        
+
 
 #
