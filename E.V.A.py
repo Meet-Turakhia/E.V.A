@@ -1,4 +1,5 @@
 import os
+from pickupline import pickuplinegen
 import pyowm
 import pyjokes
 import pyttsx3
@@ -29,6 +30,10 @@ import screen_brightness_control as sbc
 import re
 import time
 import cv2
+import randfacts
+import riddle
+import pickupline
+# from Riddles.riddle import riddle
 
 # p = pyaudio.PyAudio()
 # info = p.get_host_api_info_by_index(0)
@@ -459,7 +464,7 @@ if __name__ == "__main__":
 
             cv2.destroyAllWindows()
 
-        #-----------------------------------------------------------------------------general qna's
+        # -----------------------------------------------------------------------------general qna's
 
         elif "hi" in query or "hello" in query or "whatsup" in query:
             print("E.V.A: Hey there, what can i do for you? 😃 <-")
@@ -500,8 +505,63 @@ if __name__ == "__main__":
         elif "who am i" in query:
             print("E.V.A: A human for sure! <-")
             speak("a human for sure")
-            
-        
 
+        elif "your purpose" in query or "why do you exist" in query or "why you came to" in query:
+            print("E.V.A: My sole purpose is to help you in anyway I can! 😉 <-")
+            speak("my sole purpose is to help you in any way i can")
 
-#
+        elif "will you be my" in query:
+            print("E.V.A: I am already married to my job, which is helping you! 😉 <- ")
+            speak("i am already married to my job, which is helping you")
+
+        elif "who are you" in query:
+            print("E.V.A: I am E.V.A, your personal voice assistant! <-")
+            speak("i am eva your personal voice assistant")
+
+        elif "fact" in query:
+            fact = randfacts.getFact()
+            print(f"E.V.A: Here is one, {fact} <-")
+            speak(f"here is one, {fact}")
+
+        elif "self destruct" in query:
+            print(
+                "E.V.A: Ok, Destructing in 3... 2... 1... 💣, Well guess I survived! 🤷‍♀️ <-")
+            speak("ok, destructing in 3, 2, 1, well guess i survived")
+
+        elif "clean my room" in query:
+            print("Make me a pair of hands and leg and I may just do that for you 😉 <-")
+            speak("make me a pair of hands and legs and i may just do that for you")
+
+        elif "are you married" in query:
+            print(
+                "E.V.A: I am still waiting for a right electronic device to steal my heart 💖 <-")
+            speak("i am still waiting for a right electronic device to steal my heart")
+
+        elif "speak morse code" in query:
+            print(
+                "E.V.A: .... . .-.. --- , it means hello in morse code 😉, cant say it out load 🕵️‍♀ <-")
+            speak("check this out")
+
+        elif "you have imagination" in query:
+            print("E.V.A: Yes, I am imagining a vacation in Hawaii 😉 <-")
+            speak("yes, i am imagining a vacation in hawaii")
+
+        elif "i am naked" in query:
+            print(
+                "E.V.A: If you are going out like that, I can give you the weather forecast 😆 <-")
+            speak("if you are going out like that, i can give you the weather forecast")
+
+        elif "are you naked" in query:
+            print("E.V.A: If I am, then its for science 👩‍🔬 <-")
+            speak("if i am, then its for science")
+
+        elif "pick up line" in query or "pickup line" in query:
+            p = pickuplinegen.Pickuplinegen()
+            pl = p.get_pickupline()
+            print(
+                f"E.V.A: Feeling brave are'nt we? let me see if I can search one.../ <-")
+            speak("feeling brave arent we, let me see if i can search one")
+            print(f"E.V.A: Oh here you go, {p} <-")
+            speak(f"oh here you go, {p}")
+
+            #
