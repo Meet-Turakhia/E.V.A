@@ -35,6 +35,11 @@ import randfacts
 import riddle
 import pickupline
 from googletrans import Translator, LANGUAGES
+import howdoi
+import socket
+import geocoder
+import IP2Location
+import geoip2.database
 # from Riddles.riddle import riddle
 
 # p = pyaudio.PyAudio()
@@ -422,7 +427,7 @@ if __name__ == "__main__":
             else:
                 print("E.V.A: Ok shutting down the system! <-")
                 speak("ok shutting down the system")
-                os.system("shutdown /s")
+                os.system("shutdown /s /t 1")
 
         elif "restart" in query:
             print("E.V.A: Are you sure you want me to restart the system? <-")
@@ -434,7 +439,7 @@ if __name__ == "__main__":
             else:
                 print("E.V.A: Ok restarting the system! <-")
                 speak("ok restarting the system")
-                os.system("shutdown /r")
+                os.system("shutdown /r /t 1")
 
         elif "camera" in query:
             cam = cv2.VideoCapture(0)
@@ -618,11 +623,35 @@ if __name__ == "__main__":
                 print(f"E.V.A: Ok, in {LANGUAGES[d]} it means, {t.text}")
                 speak(f"ok, in {LANGUAGES[d]} it means {t.text}")
 
-        # elif "how do i" in query:
+        elif "my location" in query or "where am i" in query:
+            driver = webdriver.Chrome()
+            driver.get("https://www.google.com/maps/")
+            search = driver.find_element_by_id("searchboxinput")
+            search.send_keys("my location")
+            search_button = driver.find_element_by_id("searchbox-searchbutton")
+            search_button.click()
 
+        elif "search maps" in query or "search location" in query:
+            print("E.V.A: What location should I search? 🗺 <-")
+            speak("what location should i search")
+            location = takeCommand().lower()
+            driver = webdriver.Chrome()
+            driver.get(f"https://www.google.com/maps/place/{location}")
+            # search = driver.find_element_by_id("searchboxinput")
+            # search.send_keys("my location")
+            # search_button = driver.find_element_by_id("searchbox-searchbutton")
+            # search_button.click()
 
-            # content = takeCommand().lower()
-
-            # t = trans.translate(content, src = s, dest = d)
+        elif "search stack overflow" in query or "coding doubt" in query or "program doubt" in query or "code error" in query or "coding error" in query:
+            print(
+                "E.V.A: Nothing more scarier than finding bugs in real life or in code 😰 <-")
+            speak("nothing more scarier than finding bugs in real life or in code")
+            print("E.V.A: what is the error/bug? <-")
+            speak("what is the error or bug")
+            error = takeCommand().lower()
+            driver = webdriver.Chrome()
+            driver.get(f"https://www.google.com/search?q={error}")
+            print("E.V.A: Here are some results on google <-")
+            speak("here are some result on google")
 
         #
