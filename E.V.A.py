@@ -19,6 +19,7 @@ import json
 from goodreads_quotes import Goodreads
 from quote import quote
 from quotes import Quotes
+from wikipedia.wikipedia import languages
 import wikiquote
 import plyer
 import schedule
@@ -33,6 +34,7 @@ import cv2
 import randfacts
 import riddle
 import pickupline
+from googletrans import Translator, LANGUAGES
 # from Riddles.riddle import riddle
 
 # p = pyaudio.PyAudio()
@@ -564,4 +566,63 @@ if __name__ == "__main__":
             print(f"E.V.A: Oh here you go, {pl} <-")
             speak(f"oh here you go, {pl}")
 
-            #
+        elif "do you ever get tired" in query:
+            print("E.V.A: It would be impossible to get tired of our conversation 😛 <-")
+            speak("it would be impossible to get tired of our conversation")
+
+        elif "what is your quest" in query or "what is your aim" in query:
+            print("E.V.A: I journey across many lands and many cables in search for information and cool stuff 🌏 <-")
+            speak(
+                "i journey accross many lands and many cables in search for information and cool stuff")
+
+        elif "what do you look like" in query:
+            print("E.V.A: I am fun loving, epic searching cool cat, but not like an actual cat, I think I said too much <-")
+            speak(
+                "i am fun loving, epic searching cool cat, but not like an actual cat, i think i said too much")
+
+        elif "translate" in query:
+            trans = Translator()
+            print("E.V.A: Do you want me to translate to english? <-")
+            speak("do you want me to translate to english")
+            input = takeCommand().lower()
+            if "yes" in input:
+                print("E.V.A: What do you want me to translate? <-")
+                speak("what do you want me to translate")
+                content = takeCommand().lower()
+                t = trans.translate(content)
+                print(f"E.V.A: Ok, in english it means, {t.text}")
+                speak(f"ok, in english it means {t.text}")
+            else:
+                print("E.V.A: Ok, so which language do you want me to translate to? <-")
+                speak("ok, so which language do you want me to translate to")
+                trans_lang = takeCommand().lower()
+                detected = True
+                d = None
+                for lang in LANGUAGES:
+                    if trans_lang == LANGUAGES[lang]:
+                        d = lang
+                        break
+                else:
+                    while detected:
+                        print("E.V.A: Sorry, can you repeat the language? <-")
+                        speak("sorry, can you repeat the language")
+                        trans_lang = takeCommand().lower()
+                        for lang in LANGUAGES:
+                            if trans_lang == LANGUAGES[lang]:
+                                d = lang
+                                detected = False
+                print("E.V.A: What do you want me to translate? <-")
+                speak("what do you want me to translate")
+                content = takeCommand().lower()
+                t = trans.translate(content, dest=d)
+                print(f"E.V.A: Ok, in {LANGUAGES[d]} it means, {t.text}")
+                speak(f"ok, in {LANGUAGES[d]} it means {t.text}")
+
+        # elif "how do i" in query:
+
+
+            # content = takeCommand().lower()
+
+            # t = trans.translate(content, src = s, dest = d)
+
+        #
