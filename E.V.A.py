@@ -56,7 +56,7 @@ engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
 engine.setProperty("voice", voices[0].id)
 conn = sqlite3.connect("eva.db")
-conn.execute("CREATE TABLE IF NOT EXISTS notes (id INT UNSIGNED PRIMARY KEY, note VARCHAR(255), date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);")
+conn.execute("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, note VARCHAR(255), date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);")
 
 
 def speak(audio):
@@ -662,16 +662,15 @@ if __name__ == "__main__":
             speak("what do you want to note down")
             note = takeCommand().lower()
             conn.execute(f"INSERT INTO notes (note) VALUES (?);", (note,))
+            conn.commit()
 
         elif "show note" in query or "show memo" in query or "display note" in query or "display memo" in query:
             print("E.V.A: Ok, Here are your notes 📒 <-")
             speak("Ok, here are your notes")
             notes = conn.execute(f"SELECT * FROM notes ORDER BY date_time;")
+            print("notes -> datetime")
             for note in notes:
-                print("notes -> datetime")
                 print(f"E.V.A: {note[1]} -> {note[2]}")
                 speak(f"{note[1]}")
-
-        
 
         #
