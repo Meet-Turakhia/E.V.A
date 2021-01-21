@@ -40,6 +40,7 @@ import socket
 import geocoder
 import IP2Location
 import geoip2.database
+import sqlite3
 # from Riddles.riddle import riddle
 
 # p = pyaudio.PyAudio()
@@ -54,6 +55,8 @@ import geoip2.database
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
 engine.setProperty("voice", voices[0].id)
+conn = sqlite3.connect("eva.db")
+conn.execute("CREATE TABLE IF NOT EXISTS notes (id INT UNSIGNED PRIMARY KEY, note VARCHAR(255), date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);")
 
 
 def speak(audio):
@@ -653,5 +656,22 @@ if __name__ == "__main__":
             driver.get(f"https://www.google.com/search?q={error}")
             print("E.V.A: Here are some results on google <-")
             speak("here are some result on google")
+
+        elif "take note" in query or "note down" in query or "take memo" in query:
+            print("E.V.A: What do you want to note down? <-")
+            speak("what do you want to note down")
+            note = takeCommand().lower()
+            conn.execute(f"INSERT INTO notes (note) VALUES (?);", (note,))
+
+        elif "show note" in query or "show memo" in query or "display note" in query or "display memo" in query:
+            print("E.V.A: Ok, Here are your notes 📒 <-")
+            speak("Ok, here are your notes")
+            notes = conn.execute(f"SELECT * FROM notes ORDER BY date_time;")
+            for note in notes:
+                print("notes -> datetime")
+                print(f"E.V.A: {note[1]} -> {note[2]}")
+                speak(f"{note[1]}")
+
+        
 
         #
