@@ -19,7 +19,7 @@ import json
 from goodreads_quotes import Goodreads
 from quote import quote
 from quotes import Quotes
-from wikipedia.wikipedia import languages
+from wikipedia.wikipedia import languages, random
 import wikiquote
 import plyer
 import schedule
@@ -43,6 +43,8 @@ import geoip2.database
 import sqlite3
 import winsound
 import threading
+from bs4 import BeautifulSoup
+import random
 # from Riddles.riddle import riddle
 
 # p = pyaudio.PyAudio()
@@ -701,7 +703,8 @@ if __name__ == "__main__":
             am_pm = input("am or pm? ")
             message = input("message? ")
 
-            print(f"Waiting for time: {alarm_hour}:{alarm_minutes} {am_pm} {message}")
+            print(
+                f"Waiting for time: {alarm_hour}:{alarm_minutes} {am_pm} {message}")
 
             # time conversion
             # because datetime module returns time in military form i.e. 24 hrs format
@@ -722,6 +725,48 @@ if __name__ == "__main__":
             time.sleep(0.2)
             t2.start()
 
-        
+        elif "story" in query or "stories" in query or "novel" in query:
+            new_voice_rate = 145
+            engine.setProperty("rate", new_voice_rate)
+            print(
+                "E.V.A: Dim the lights, grab a beverage ☕ and get ready to listen to a story! <-")
+            speak("dim the lights, grab a beverage and get ready to listen to a story ")
+            options = webdriver.ChromeOptions()
+            options.headless = True
+            driver = webdriver.Chrome(options=options)
+            driver.get(
+                "https://www.short-story.me/")
+            story_links = driver.find_elements_by_css_selector(
+                "h3.allmode-title > a")
+            story_select = random.choice(story_links)
+            story_select.click()
+            print(story_select)
+            bs = BeautifulSoup(driver.page_source, "html.parser")
+            time.sleep(3)
+            story = bs.find("div", itemprop="articleBody")
+            print(story)
+            speak(story)
+            new_voice_rate = 160
+            engine.setProperty("rate", new_voice_rate)
 
+        elif "poem" in query or "poetry" in query:
+            new_voice_rate = 120
+            engine.setProperty("rate", new_voice_rate)
+            print(
+                "E.V.A: Dim the lights, grab a beverage ☕ and immerse in this poem! <-")
+            speak("dim the lights, grab a beverage and immerse in this poem ")
+            options = webdriver.ChromeOptions()
+            options.headless = True
+            driver = webdriver.Chrome(options=options)
+            driver.get(
+                "https://www.poetrybyheart.org.uk/random-poem/")
+            bs = BeautifulSoup(driver.page_source, "html.parser")
+            time.sleep(3)
+            poem = bs.find("div", "entry no-oed")
+            print(poem)
+            speak(poem)
+            new_voice_rate = 160
+            engine.setProperty("rate", new_voice_rate)
+
+        
         #
