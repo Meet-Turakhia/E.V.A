@@ -41,6 +41,8 @@ import geocoder
 import IP2Location
 import geoip2.database
 import sqlite3
+import winsound
+import threading
 # from Riddles.riddle import riddle
 
 # p = pyaudio.PyAudio()
@@ -82,6 +84,7 @@ def takeCommand():
         # speak("sorry could not catch that, can you rephrase please")
         return "None"
     return query
+    time.sleep(1)
 
 
 def wishMe():
@@ -116,6 +119,22 @@ def reminder(title, message):
         app_icon="assets\evalogo.ico",
         timeout=None
     )
+
+
+def alarm(alarm_hour, alarm_minutes, message):
+    while True:  # infinite loop starts to make the program running until time matches alarm time
+
+        # ringing alarm + execution condition for alarm
+        if alarm_hour == datetime.datetime.now().hour and alarm_minutes == datetime.datetime.now().minute:
+            winsound.Beep(1000, 1000)
+            plyer.notification.notify(
+                title=message,
+                message=message,
+                app_icon="assets\evalogo.ico",
+                timeout=10
+            )
+            break
+    time.sleep(1)
 
 
 if __name__ == "__main__":
@@ -330,33 +349,36 @@ if __name__ == "__main__":
             # speak(quote)
             print("E.V.A: Which personality's quote would you like to hear? <-")
             speak("which personality's quote would you like to hear")
-            # personality = takeCommand().lower()
-            quote = wikiquote.quotes(page_title="Bill Gates", max_quotes=1)
+            personality = takeCommand().lower()
+            if personality == "none":
+                quote = wikiquote.quote_of_the_day()
+            else:
+                quote = wikiquote.quotes(page_title=personality, max_quotes=1)
             print(quote)
             speak(quote)
 
-        elif "reminder" in query:
+        # elif "reminder" in query:
 
-            print("E.V.A: Ok, what should be the title of the reminder? <-")
-            speak("ok, what should be the title of the reminder")
+        #     print("E.V.A: Ok, what should be the title of the reminder? <-")
+        #     speak("ok, what should be the title of the reminder")
 
-            title = takeCommand().lower()
+        #     title = takeCommand().lower()
 
-            print("E.V.A: Ok, and what message should I add? <-")
-            speak("ok, and what message should I add")
+        #     print("E.V.A: Ok, and what message should I add? <-")
+        #     speak("ok, and what message should I add")
 
-            message = takeCommand().lower()
+        #     message = takeCommand().lower()
 
-            print(
-                f"E.V.A: Got it, when do you wanna get reminded for {title}? <-")
-            speak(f"got it, when do you wanna get reminded for {title}")
+        #     print(
+        #         f"E.V.A: Got it, when do you wanna get reminded for {title}? <-")
+        #     speak(f"got it, when do you wanna get reminded for {title}")
 
-            # time = takeCommand().lower()
-            # time = datetime.datetime.strptime(time, "%H:%M:%S")
-            time = int(input("enter time: "))
+        #     # time = takeCommand().lower()
+        #     # time = datetime.datetime.strptime(time, "%H:%M:%S")
+        #     time = int(input("enter time: "))
 
-            schedule.every(time).seconds.do(reminder, title, message)
-            schedule.run_pending()
+        #     schedule.every(time).seconds.do(reminder, title, message)
+        #     schedule.run_pending()
 
             # --------------------------------------------------------------------------os_commamds
 
@@ -672,5 +694,34 @@ if __name__ == "__main__":
             for note in notes:
                 print(f"E.V.A: {note[1]} -> {note[2]}")
                 speak(f"{note[1]}")
+
+        elif "alarm" in query or "reminder" in query:
+            alarm_hour = int(input("Set hour: "))
+            alarm_minutes = int(input("Set minutes: "))
+            am_pm = input("am or pm? ")
+            message = input("message? ")
+
+            print(f"Waiting for time: {alarm_hour}:{alarm_minutes} {am_pm} {message}")
+
+            # time conversion
+            # because datetime module returns time in military form i.e. 24 hrs format
+            if am_pm == 'pm':  # to convert pm to military time
+                alarm_hour += 12
+
+            elif alarm_hour == 12 and am_pm == 'am':  # to convert 12am to military time
+                alarm_hour -= 12
+
+            else:
+                pass
+
+            # alarm(alarm_hour, alarm_minutes)
+            t1 = threading.Thread(
+                target=alarm, args=(alarm_hour, alarm_minutes, message))
+            t2 = threading.Thread(target=takeCommand)
+            t1.start()
+            time.sleep(0.2)
+            t2.start()
+
+        
 
         #
