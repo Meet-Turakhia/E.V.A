@@ -5,6 +5,7 @@ import pyjokes
 import pyttsx3
 import smtplib
 import datetime
+from selenium.webdriver.common import keys
 import wikipedia
 import webbrowser
 from selenium import webdriver
@@ -45,6 +46,8 @@ import winsound
 import threading
 from bs4 import BeautifulSoup
 import random
+import keyboard
+from selenium.webdriver.common.keys import Keys
 # from Riddles.riddle import riddle
 
 # p = pyaudio.PyAudio()
@@ -768,5 +771,32 @@ if __name__ == "__main__":
             new_voice_rate = 160
             engine.setProperty("rate", new_voice_rate)
 
-        
+        elif "whatsapp" in query or "send whatsapp" in query or "message in whatsapp" in query:
+            print("E.V.A: Ok, opening whatsapp <-")
+            speak("ok, opening whatsapp")
+            driver = webdriver.Chrome()
+            driver.get("https://web.whatsapp.com/")
+            rememberMe = driver.find_element_by_name("rememberMe")
+            rememberMe.click()
+            wait = WebDriverWait(driver, 600)
+            print("E.V.A: Scan QR code <-")
+            speak("scan QR code")
+            input()
+
+            # Replace 'Friend's Name' with the name of your friend
+            # or the name of a group
+            to = list(input("friends name").split(" "))
+
+            # Replace the below string with your own message
+            string = input("message")
+
+            for person in to:
+                user = driver.find_element_by_xpath(
+                    "//span[@title='{}']".format(person))
+                user.click()
+                input_box = driver.find_element_by_xpath(
+                    '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')
+                input_box.send_keys(string + Keys.ENTER)
+            time.sleep(1)
+
         #
