@@ -1,71 +1,49 @@
 import os
-from pickupline import pickuplinegen
-import pyowm
+import re
+import cv2
+import time
+import json
+from more_itertools.recipes import take
+import plyer
+import psutil
+import random
 import pyjokes
+import sqlite3
 import pyttsx3
 import smtplib
-import datetime
-from selenium.webdriver.common import keys
-import wikipedia
-import webbrowser
-from selenium import webdriver
-import speech_recognition as sr
-from newsapi import NewsApiClient
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import pyaudio
 import requests
-import json
-from goodreads_quotes import Goodreads
-from quote import quote
-from quotes import Quotes
-from wikipedia.wikipedia import languages, random
-import wikiquote
-import plyer
-import schedule
 import datetime
 import winshell
-import psutil
 import platform
-import screen_brightness_control as sbc
-import re
-import time
-import cv2
-import randfacts
-import riddle
-import pickupline
-from googletrans import Translator, LANGUAGES
-import howdoi
-import socket
-import geocoder
-import IP2Location
-import geoip2.database
-import sqlite3
+import datetime
 import winsound
+import wikiquote
+import wikipedia
 import threading
-from bs4 import BeautifulSoup
-import random
-import keyboard
-from selenium.webdriver.common.keys import Keys
-import instascrape
-import instagram_explore as ie
+import randfacts
+import webbrowser
 import wolframalpha
-# from Riddles.riddle import riddle
-
-# p = pyaudio.PyAudio()
-# info = p.get_host_api_info_by_index(0)
-# numdevices = info.get('deviceCount')
-# for i in range(0, numdevices):
-#     if (p.get_device_info_by_host_api_device_index(0, i).get('maxInputChannels')) > 0:
-#         print("Input Device id ", i, " - ", p.get_device_info_by_host_api_device_index(0, i).get('name'))
+from quote import quote
+from bs4 import BeautifulSoup
+from selenium import webdriver
+import instagram_explore as ie
+import speech_recognition as sr
+from newsapi import NewsApiClient
+from pickupline import pickuplinegen
+from wikipedia.wikipedia import random
+import screen_brightness_control as sbc
+from selenium.webdriver.common.by import By
+from googletrans import Translator, LANGUAGES
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 # initializing the pyttsx3 for text to speech conversion
 engine = pyttsx3.init("sapi5")
 voices = engine.getProperty("voices")
 engine.setProperty("voice", voices[0].id)
-conn = sqlite3.connect("eva.db")
+conn = sqlite3.connect("E.V.A.db")
 conn.execute("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, note VARCHAR(255), date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);")
 
 
@@ -79,7 +57,7 @@ def takeCommand():
     # takes microphone input and returns string as output
     r = sr.Recognizer()
     with sr.Microphone(1) as source:
-        print("Listening.../")
+        print("Listening.../     (Speak Now)")
         r.pause_threshold = 1
         r.adjust_for_ambient_noise(source, duration=1)
         audio = r.listen(source, phrase_time_limit=5)
@@ -88,17 +66,14 @@ def takeCommand():
         query = r.recognize_google(audio, language="en-in")
         print(f"You: {query} <-")
     except Exception as e:
-        # print("E.V.A: Sorry could not catch that, can you rephrase please?")
-        # speak("sorry could not catch that, can you rephrase please")
         return "None"
     return query
-    time.sleep(1)
 
 
 def wishMe():
     hour = int(datetime.datetime.now().hour)
     if hour >= 0 and hour < 12:
-        print("E.V.A: Good Morning! <-")
+        print("E.V.A: Good Morning! 🌄 <-")
         speak("good morning")
     elif hour >= 12 and hour < 18:
         print("E.V.A: Good Afternoon! <-")
@@ -119,19 +94,8 @@ def sendEmail(to, content):
     server.close()
 
 
-def reminder(title, message):
-
-    plyer.notification.notify(
-        title=title,
-        message=message,
-        app_icon="assets\evalogo.ico",
-        timeout=None
-    )
-
-
 def alarm(alarm_hour, alarm_minutes, message):
     while True:  # infinite loop starts to make the program running until time matches alarm time
-
         # ringing alarm + execution condition for alarm
         if alarm_hour == datetime.datetime.now().hour and alarm_minutes == datetime.datetime.now().minute:
             winsound.Beep(1000, 1000)
@@ -146,7 +110,6 @@ def alarm(alarm_hour, alarm_minutes, message):
 
 
 if __name__ == "__main__":
-
     print("<-------------------------------------------------------------------------------------------------------------------------->")
     print("                                                           E.V.A                                                            ")
     print("<-------------------------------------------------------------------------------------------------------------------------->")
@@ -154,6 +117,7 @@ if __name__ == "__main__":
     wishMe()
 
     while True:
+
         query = takeCommand().lower()
 
         # logic for executing task based on query
@@ -170,53 +134,55 @@ if __name__ == "__main__":
             print(results)
             speak(results)
 
+        # ----------------------------------------------------------------------------------task based queries
+
         # -----------------------------------------------------------------------------------open queries
 
         elif "open google" in query:
-            speak("opening google")
             print("E.V.A: Opening Google.../ <-")
+            speak("opening google")
             webbrowser.open("google.com")
 
         elif "open youtube" in query:
-            speak("opening youtube")
             print("E.V.A: Opening Youtube.../ <-")
+            speak("opening youtube")
             webbrowser.open("youtube.com")
 
         elif "open stackoverflow" in query:
-            speak("opening stackoverflow")
             print("E.V.A: Opening Stackoverflow.../ <-")
+            speak("opening stackoverflow")
             webbrowser.open("stackoverflow.com")
 
         elif "open wikipedia" in query:
-            speak("opening wikipedia")
             print("E.V.A: Opening Wikipedia.../ <-")
+            speak("opening wikipedia")
             webbrowser.open("wikipedia.com")
 
         elif "open instagram" in query:
-            speak("opening instagram")
             print("E.V.A: Opening Instagram.../ <-")
+            speak("opening instagram")
             webbrowser.open("instagram.com")
 
         elif "open twitter" in query:
-            speak("opening twitter")
             print("E.V.A: Opening Twitter.../ <-")
+            speak("opening twitter")
             webbrowser.open("twitter.com")
 
         elif "open whatsapp" in query:
-            speak("opening whatsapp")
             print("E.V.A: Opening WhatsApp.../ <-")
+            speak("opening whatsapp")
             webbrowser.open("whatsapp.com")
 
         elif "open facebook" in query:
-            speak("opening facebook")
             print("E.V.A: Opening Facebook.../ <-")
+            speak("opening facebook")
             webbrowser.open("facebook.com")
 
         elif "open" in query:
             query = query.replace("open", "")
             query = query.replace(" ", "")
-            speak(f"opening {query}")
             print(f"E.V.A: Opening{query}.../ <-")
+            speak(f"opening {query}")
             try:
                 webbrowser.open(f"{query}.com")
             except Exception as e:
@@ -226,7 +192,7 @@ if __name__ == "__main__":
 
         elif "play music" in query:
             print("E.V.A: Which music shall i play? <-")
-            speak("what music shall i play")
+            speak("which music shall i play")
             query = takeCommand().lower()
             driver = webdriver.Chrome()
             driver.get(f"https://www.youtube.com/results?search_query={query}")
@@ -234,10 +200,9 @@ if __name__ == "__main__":
                 EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div/ytd-page-manager/ytd-search/div[1]/ytd-two-column-search-results-renderer/div/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-video-renderer[1]/div[1]/ytd-thumbnail/a")))
             song.click()
 
-        # elif "stop music" in query:
-        #     driver.close()
-
-        elif "open visual studio" in query:
+        elif "open visual studio" in query or "open vs" in query:
+            print("E.V.A: Opening Visual Studio Code <-")
+            speak("opening visual studio code")
             codePath = "C:\\Users\\Meet\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
             os.startfile(codePath)
 
@@ -245,8 +210,8 @@ if __name__ == "__main__":
             try:
                 speak("please enter reciepents email address")
                 to = input("E.V.A: Please enter the address:")
-                print("E.V.A: What should i write? <-")
-                speak("what should i write")
+                print("E.V.A: What message should i write? <-")
+                speak("what message should i write")
                 content = takeCommand().lower()
                 sendEmail(to, content)
                 print("E.V.A: Email has been sent! <-")
@@ -268,42 +233,18 @@ if __name__ == "__main__":
             speak(f"the time is {strTime}")
 
         elif "news" in query:
-            # Init
+            # init
             newsapi = NewsApiClient(api_key='dc60827e1a6140978812a8aec5504293')
-
             # /v2/top-headlines
             top_headlines = newsapi.get_top_headlines(
                 language='en', country='in')
-
             print("E.V.A: Here are some latest news headlines <-")
             speak("here are some latest news headlines")
             for news in top_headlines["articles"]:
                 title = news["title"]
                 print(title)
                 speak(title)
-
-            # /v2/everything
-            # all_articles = newsapi.get_everything(q='bitcoin',
-            #                                     sources='bbc-news,the-verge',
-            #                                     domains='bbc.co.uk,techcrunch.com',
-            #                                     from_param='2017-12-01',
-            #                                     to='2017-12-12',
-            #                                     language='en',
-            #                                     sort_by='relevancy',
-            #                                     page=2)
-
-            # all_articles = newsapi.get_everything(sources='bbc-news,the-verge',
-            #                                       domains='bbc.co.uk,techcrunch.com',
-            #                                       from_param='2021-01-01',
-            #                                       to='2021-01-12',
-            #                                       language='en',
-            #                                       sort_by='relevancy',
-            #                                       page=2)
-
-            # /v2/sources
             sources = newsapi.get_sources()
-            # print(top_headlines)
-            # general q&a's
 
         elif "weather" in query:
             # importing requests and json
@@ -350,51 +291,39 @@ if __name__ == "__main__":
                 print("Error in the HTTP request")
 
         elif "quote" in query or "quotes" in query:
-            # print("E.V.A: Quote of the day is:.../ <-")
-            # speak("quote of the day is")
-            # quote = wikiquote.quote_of_the_day()
-            # print(quote)
-            # speak(quote)
+            print("E.V.A: Quote of the day is:.../ <-")
+            speak("quote of the day is")
+            quote = wikiquote.quote_of_the_day()
+            print(quote)
+            speak(quote)
             print("E.V.A: Which personality's quote would you like to hear? <-")
             speak("which personality's quote would you like to hear")
             personality = takeCommand().lower()
             if personality == "none":
                 quote = wikiquote.quote_of_the_day()
             else:
-                quote = wikiquote.quotes(page_title=personality, max_quotes=1)
-            print(quote)
-            speak(quote)
-
-        # elif "reminder" in query:
-
-        #     print("E.V.A: Ok, what should be the title of the reminder? <-")
-        #     speak("ok, what should be the title of the reminder")
-
-        #     title = takeCommand().lower()
-
-        #     print("E.V.A: Ok, and what message should I add? <-")
-        #     speak("ok, and what message should I add")
-
-        #     message = takeCommand().lower()
-
-        #     print(
-        #         f"E.V.A: Got it, when do you wanna get reminded for {title}? <-")
-        #     speak(f"got it, when do you wanna get reminded for {title}")
-
-        #     # time = takeCommand().lower()
-        #     # time = datetime.datetime.strptime(time, "%H:%M:%S")
-        #     time = int(input("enter time: "))
-
-        #     schedule.every(time).seconds.do(reminder, title, message)
-        #     schedule.run_pending()
+                try:
+                    quote = wikiquote.quotes(
+                        page_title=personality, max_quotes=1)
+                    print(quote)
+                    speak(quote)
+                except:
+                    personality = "Bill Gates"
+                    quote = wikiquote.quotes(
+                        page_title=personality, max_quotes=1)
+                    print(
+                        f"E.V.A: Some error occured with the feature but here is one random quote: {quote} <-")
+                    speak(
+                        f"some error occured with the feature but here is one random quote, {quote}")
 
             # --------------------------------------------------------------------------os_commamds
 
         elif "empty recycle bin" in query:
-            print("E.V.A: Are you sure you want me to empty recycle bin? <-")
-            speak("are you sure you want me to empty recycle bin")
-            input = takeCommand().lower()
-            if input == "no":
+            print(
+                "E.V.A: Are you sure you want me to empty the recycle bin? [yes/no] <-")
+            speak("are you sure you want me to empty the recycle bin")
+            command = takeCommand().lower()
+            if "no" in command:
                 print("E.V.A: Ok, aborting the process <-")
                 speak("ok, aborting the process")
             else:
@@ -451,10 +380,11 @@ if __name__ == "__main__":
             time.sleep(period*60)
 
         elif "shutdown" in query:
-            print("E.V.A: Are you sure you want me to shut down the system? <-")
+            print(
+                "E.V.A: Are you sure you want me to shutdown the system? [yes/no] <-")
             speak("are you sure you want me to shutdown the system")
-            input = takeCommand().lower()
-            if input == "no":
+            command = takeCommand().lower()
+            if "no" in command:
                 print("E.V.A: Ok, aborting the process <-")
                 speak("ok, aborting the process")
             else:
@@ -463,10 +393,11 @@ if __name__ == "__main__":
                 os.system("shutdown /s /t 1")
 
         elif "restart" in query:
-            print("E.V.A: Are you sure you want me to restart the system? <-")
+            print(
+                "E.V.A: Are you sure you want me to restart the system? [yes/no] <-")
             speak("are you sure you want me to restart the system")
-            input = takeCommand().lower()
-            if input == "no":
+            command = takeCommand().lower()
+            if "no" in command:
                 print("E.V.A: Ok, aborting the process <-")
                 speak("ok, aborting the process")
             else:
@@ -476,9 +407,7 @@ if __name__ == "__main__":
 
         elif "camera" in query:
             cam = cv2.VideoCapture(0)
-
             cv2.namedWindow("test")
-
             img_counter = 0
 
             while True:
@@ -487,7 +416,6 @@ if __name__ == "__main__":
                     print("failed to grab frame")
                     break
                 cv2.imshow("test", frame)
-
                 k = cv2.waitKey(1)
                 if k % 256 == 27:
                     # ESC pressed
@@ -501,7 +429,6 @@ if __name__ == "__main__":
                     img_counter += 1
 
             cam.release()
-
             cv2.destroyAllWindows()
 
         # -----------------------------------------------------------------------------general qna's
@@ -618,6 +545,11 @@ if __name__ == "__main__":
             speak(
                 "i am fun loving, epic searching cool cat, but not like an actual cat, i think i said too much")
 
+        elif "bye" in query or "exit" in query or "quit" in query:
+            print("E.V.A: Ok, closing the system, have a nice day! <-")
+            speak("ok, closing the system, have a nice day")
+            exit()
+
         elif "translate" in query:
             trans = Translator()
             print("E.V.A: Do you want me to translate to english? <-")
@@ -670,10 +602,6 @@ if __name__ == "__main__":
             location = takeCommand().lower()
             driver = webdriver.Chrome()
             driver.get(f"https://www.google.com/maps/place/{location}")
-            # search = driver.find_element_by_id("searchboxinput")
-            # search.send_keys("my location")
-            # search_button = driver.find_element_by_id("searchbox-searchbutton")
-            # search_button.click()
 
         elif "search stack overflow" in query or "coding doubt" in query or "program doubt" in query or "code error" in query or "coding error" in query:
             print(
@@ -708,21 +636,16 @@ if __name__ == "__main__":
             alarm_minutes = int(input("Set minutes: "))
             am_pm = input("am or pm? ")
             message = input("message? ")
-
             print(
                 f"Waiting for time: {alarm_hour}:{alarm_minutes} {am_pm} {message}")
-
             # time conversion
             # because datetime module returns time in military form i.e. 24 hrs format
             if am_pm == 'pm':  # to convert pm to military time
                 alarm_hour += 12
-
             elif alarm_hour == 12 and am_pm == 'am':  # to convert 12am to military time
                 alarm_hour -= 12
-
             else:
                 pass
-
             # alarm(alarm_hour, alarm_minutes)
             t1 = threading.Thread(
                 target=alarm, args=(alarm_hour, alarm_minutes, message))
@@ -784,16 +707,12 @@ if __name__ == "__main__":
             rememberMe = driver.find_element_by_name("rememberMe")
             rememberMe.click()
             wait = WebDriverWait(driver, 600)
-            print("E.V.A: Scan QR code <-")
-            speak("scan QR code")
+            print("E.V.A: Scan QR code and press any key <-")
+            speak("scan qr code and press any key")
             input()
-
-            # Replace 'Friend's Name' with the name of your friend
-            # or the name of a group
-            to = list(input("friends name").split(" "))
-
+            to = list(input("Enter names of reciepents: ").split(" "))
             # Replace the below string with your own message
-            string = input("message")
+            string = input("Enter message: ")
 
             for person in to:
                 user = driver.find_element_by_xpath(
@@ -862,40 +781,20 @@ if __name__ == "__main__":
                         times = times + 1
 
         elif "insta" in query or "find in insta" in query or "search insta" in query:
-
-            # search user name
-            result = ie.user('timesofindia')
-
+            print("E.V.A: Whom do you want me to search? <-")
+            speak("whom do you want me to search")
+            query = takeCommand().lower()
+            result = ie.user(query)
             parsed_data = json.dumps(result, indent=4,
-                                    sort_keys=True)
-
+                                     sort_keys=True)
             # displaying the data
             print(parsed_data[15:400])
 
-            res = ie.user_images('timesofindia') 
-  
-            parsed_data = json.dumps(res, indent = 4, 
-                                    sort_keys = True) 
-            
-            # displaying the data 
+            res = ie.user_images(query)
+            parsed_data = json.dumps(res, indent=4,
+                                     sort_keys=True)
+            # displaying the data
             print(parsed_data)
-
-            # options = webdriver.ChromeOptions()
-            # options.headless = True
-            # driver = webdriver.Chrome()
-            # print("E.V.A: What do you want to search, profile or hashtags? <-")
-            # speak("what do you want to search, profile or hashtags")
-            # command = takeCommand().lower()
-            # if "profile" in command:
-            #     print("E.V.A: Tell me the name of profile <-")
-            #     speak("tell me the name of profile")
-            #     profile = takeCommand().lower()
-            #     driver.get(f"https://www.instagram.com/{profile}")
-            # elif "hashtag" in command:
-            #     print("E.V.A: Tell me the hashtag <-")
-            #     speak("tell me the hashtag")
-            #     hashtag = takeCommand().lower()
-            #     driver.get(f"https://www.instagram.com/explore/tags/{hashtag}")
 
         elif "search facebook" in query:
             print("E.V.A: What do you want to search? <-")
@@ -916,14 +815,17 @@ if __name__ == "__main__":
                 print(f"E.V.A: Searching {query} <-")
                 speak(f"searching {query}")
                 driver = webdriver.Chrome()
-                driver.get(f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
+                driver.get(
+                    f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
 
         else:
             if query != "none":
                 print(f"E.V.A: Searching {query} <-")
                 speak(f"searching {query}")
                 driver = webdriver.Chrome()
-                driver.get(f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
-                print("E.V.A: Results not relevant enough? Please phrase better so that i can understand <-")
-                speak("results not relevant enough, please phrase better so that i can understand")
-                            
+                driver.get(
+                    f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
+                print(
+                    "E.V.A: Results not relevant enough? Please phrase better so that i can understand <-")
+                speak(
+                    "results not relevant enough, please phrase better so that i can understand")
