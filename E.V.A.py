@@ -50,6 +50,7 @@ import keyboard
 from selenium.webdriver.common.keys import Keys
 import instascrape
 import instagram_explore as ie
+import wolframalpha
 # from Riddles.riddle import riddle
 
 # p = pyaudio.PyAudio()
@@ -903,4 +904,26 @@ if __name__ == "__main__":
             driver = webdriver.Chrome()
             driver.get(f"https://www.facebook.com/search/top?q={search}")
 
-        #
+        elif "why" in query or "how" in query or "what" in query or "who" in query:
+            app_id = '6PYQWH-E4Y7JA488T'
+            client = wolframalpha.Client(app_id)
+            res = client.query(query)
+            try:
+                output = next(res.results).text
+                print(output)
+                speak(output)
+            except:
+                print(f"E.V.A: Searching {query} <-")
+                speak(f"searching {query}")
+                driver = webdriver.Chrome()
+                driver.get(f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
+
+        else:
+            if query != "none":
+                print(f"E.V.A: Searching {query} <-")
+                speak(f"searching {query}")
+                driver = webdriver.Chrome()
+                driver.get(f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
+                print("E.V.A: Results not relevant enough? Please phrase better so that i can understand <-")
+                speak("results not relevant enough, please phrase better so that i can understand")
+                            
