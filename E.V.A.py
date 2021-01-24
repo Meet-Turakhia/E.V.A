@@ -56,12 +56,12 @@ def takeCommand():
     # takes microphone input and returns string as output
     r = sr.Recognizer()
     with sr.Microphone(1) as source:
-        print("Listening.../     (Speak Now)")
+        print("Listening.../   (Speak Now)")
         r.pause_threshold = 1
         r.adjust_for_ambient_noise(source, duration=1)
         audio = r.listen(source, phrase_time_limit=5)
     try:
-        print("Recognizing.../")
+        print("Recognizing.../   (Wait)")
         query = r.recognize_google(audio, language="en-in")
         print(f"You: {query} <-")
     except Exception as e:
@@ -110,8 +110,11 @@ def alarm(alarm_hour, alarm_minutes, message):
 
 if __name__ == "__main__":
     print("<-------------------------------------------------------------------------------------------------------------------------->")
-    print("                                                           E.V.A                                                            ")
+    print("                                                       --E.V.A--                                                            ")
+    print("                                                               ~Version 1.0                                                 ")
     print("<-------------------------------------------------------------------------------------------------------------------------->")
+    print("Released on: 24/01/2021")
+    print("< By Meet & Saish />")
 
     wishMe()
 
