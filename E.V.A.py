@@ -781,7 +781,7 @@ if __name__ == "__main__":
 
         elif "who are you" in query:
             print("E.V.A: I am E.V.A, your personal voice assistant! <-")
-            speak("i am eva your personal voice assistant")
+            speak("i am eva, your personal voice assistant")
 
         elif "self destruct" in query:
             print(
