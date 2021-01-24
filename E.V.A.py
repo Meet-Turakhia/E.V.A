@@ -209,10 +209,10 @@ if __name__ == "__main__":
                 speak(f"{note[1]}")
 
         elif "alarm" in query or "reminder" in query:
-            alarm_hour = int(input("Set hour: "))
-            alarm_minutes = int(input("Set minutes: "))
-            am_pm = input("am or pm? ")
-            message = input("message? ")
+            alarm_hour = int(takeCommand().lower())
+            alarm_minutes = int(takeCommand().lower())
+            am_pm = takeCommand().lower()
+            message = takeCommand().lower()
             print(
                 f"Waiting for time: {alarm_hour}:{alarm_minutes} {am_pm} {message}")
             # time conversion
@@ -259,8 +259,8 @@ if __name__ == "__main__":
             trans = Translator()
             print("E.V.A: Do you want me to translate to english? <-")
             speak("do you want me to translate to english")
-            input = takeCommand().lower()
-            if "yes" in input:
+            command = takeCommand().lower()
+            if "yes" in command:
                 print("E.V.A: What do you want me to translate? <-")
                 speak("what do you want me to translate")
                 content = takeCommand().lower()
@@ -374,12 +374,12 @@ if __name__ == "__main__":
         elif "freeze" in query:
             print("E.V.A: For how many minutes do you want me to freeze the system?")
             speak("for how many minutes do you want me to freeze the system")
-            input = takeCommand().lower()
-            period = re.findall("\d+", input)
+            command = takeCommand().lower()
+            period = re.findall("\d+", command)
             period = period[0]
             period = int(period)
-            print(f"E.V.A: Ok, got it freezing the system for {input}")
-            speak(f"ok got it freezing the system for {input}")
+            print(f"E.V.A: Ok, got it freezing the system for {command}")
+            speak(f"ok got it freezing the system for {command}")
             time.sleep(period*60)
 
         elif "shutdown" in query:
@@ -409,6 +409,8 @@ if __name__ == "__main__":
                 os.system("shutdown /r /t 1")
 
         elif "camera" in query:
+            print("E.V.A: Opening Camera <-")
+            speak("opening camera")
             cam = cv2.VideoCapture(0)
             cv2.namedWindow("test")
             img_counter = 0
@@ -419,18 +421,21 @@ if __name__ == "__main__":
                     print("failed to grab frame")
                     break
                 cv2.imshow("test", frame)
-                k = cv2.waitKey(1)
-                if k % 256 == 27:
-                    # ESC pressed
-                    print("Escape hit, closing...")
+                print("E.V.A: Say click, to click picture and exit, to close camera <-")
+                k = takeCommand().lower()
+                if k == "exit":
+                    # exit initiated
+                    print("E.V.A: Closing camera.../ <-")
+                    speak("closing camera")
                     break
-                elif k % 256 == 32:
-                    # SPACE pressed
+                elif k == "click":
+                    # click initiated
                     img_name = "opencv_frame_{}.png".format(img_counter)
                     cv2.imwrite(img_name, frame)
                     print("{} written!".format(img_name))
                     img_counter += 1
-
+                    print("E.V.A: Clicked image! <-")
+                    speak("clicked image")
             cam.release()
             cv2.destroyAllWindows()
 
@@ -825,5 +830,3 @@ if __name__ == "__main__":
                     "E.V.A: Results not relevant enough? Please phrase better so that i can understand <-")
                 speak(
                     "results not relevant enough, please phrase better so that i can understand")
-
-# 10 min
