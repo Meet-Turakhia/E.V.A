@@ -3,7 +3,6 @@ import re
 import cv2
 import time
 import json
-from more_itertools.recipes import take
 import plyer
 import psutil
 import random
@@ -122,7 +121,7 @@ if __name__ == "__main__":
 
         # logic for executing task based on query
 
-        # ----------------------------------------------------------------------------------search queries
+        # ---------------------------------------------------------------------------------------------search queries
 
         if "wikipedia" in query:
             print("E.V.A: Searching Wikipedia.../ <-")
@@ -134,9 +133,308 @@ if __name__ == "__main__":
             print(results)
             speak(results)
 
-        # ----------------------------------------------------------------------------------task based queries
+        elif "find in insta" in query or "search insta" in query or "search in insta" in query:
+            print("E.V.A: Whom do you want me to search? <-")
+            speak("whom do you want me to search")
+            query = takeCommand().lower()
+            result = ie.user(query)
+            parsed_data = json.dumps(result, indent=4,
+                                     sort_keys=True)
+            # displaying the data
+            print(parsed_data[15:400])
 
-        # -----------------------------------------------------------------------------------open queries
+            res = ie.user_images(query)
+            parsed_data = json.dumps(res, indent=4,
+                                     sort_keys=True)
+            # displaying the data
+            print(parsed_data)
+
+        elif "search facebook" in query:
+            print("E.V.A: What do you want to search? <-")
+            speak("what do you want to search")
+            search = takeCommand().lower()
+            driver = webdriver.Chrome()
+            driver.get(f"https://www.facebook.com/search/top?q={search}")
+
+        elif "why" in query or "how" in query or "what" in query or "who" in query:
+            app_id = '6PYQWH-E4Y7JA488T'
+            client = wolframalpha.Client(app_id)
+            res = client.query(query)
+            try:
+                output = next(res.results).text
+                print(output)
+                speak(output)
+            except:
+                print(f"E.V.A: Searching {query} <-")
+                speak(f"searching {query}")
+                driver = webdriver.Chrome()
+                driver.get(
+                    f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
+
+        elif "search maps" in query or "search location" in query:
+            print("E.V.A: What location should I search? 🗺 <-")
+            speak("what location should i search")
+            location = takeCommand().lower()
+            driver = webdriver.Chrome()
+            driver.get(f"https://www.google.com/maps/place/{location}")
+
+        elif "search error" in query or "coding doubt" in query or "program doubt" in query or "code error" in query or "coding error" in query:
+            print(
+                "E.V.A: Nothing more scarier than finding bugs in real life or in code 😰 <-")
+            speak("nothing more scarier than finding bugs in real life or in code")
+            print("E.V.A: what is the error/bug? <-")
+            speak("what is the error or bug")
+            error = takeCommand().lower()
+            driver = webdriver.Chrome()
+            driver.get(f"https://www.google.com/search?q={error}")
+            print("E.V.A: Here are some results on google <-")
+            speak("here are some result on google")
+
+        # ---------------------------------------------------------------------------------------------task based queries
+
+        elif "take note" in query or "note down" in query or "take memo" in query:
+            print("E.V.A: What do you want to note down? <-")
+            speak("what do you want to note down")
+            note = takeCommand().lower()
+            conn.execute(f"INSERT INTO notes (note) VALUES (?);", (note,))
+            conn.commit()
+
+        elif "show note" in query or "show memo" in query or "display note" in query or "display memo" in query:
+            print("E.V.A: Ok, Here are your notes 📒 <-")
+            speak("Ok, here are your notes")
+            notes = conn.execute(f"SELECT * FROM notes ORDER BY date_time;")
+            print("notes -> datetime")
+            for note in notes:
+                print(f"E.V.A: {note[1]} -> {note[2]}")
+                speak(f"{note[1]}")
+
+        elif "alarm" in query or "reminder" in query:
+            alarm_hour = int(input("Set hour: "))
+            alarm_minutes = int(input("Set minutes: "))
+            am_pm = input("am or pm? ")
+            message = input("message? ")
+            print(
+                f"Waiting for time: {alarm_hour}:{alarm_minutes} {am_pm} {message}")
+            # time conversion
+            # because datetime module returns time in military form i.e. 24 hrs format
+            if am_pm == 'pm':  # to convert pm to military time
+                alarm_hour += 12
+            elif alarm_hour == 12 and am_pm == 'am':  # to convert 12am to military time
+                alarm_hour -= 12
+            else:
+                pass
+            # alarm(alarm_hour, alarm_minutes)
+            t1 = threading.Thread(
+                target=alarm, args=(alarm_hour, alarm_minutes, message))
+            t2 = threading.Thread(target=takeCommand)
+            t1.start()
+            time.sleep(0.2)
+            t2.start()
+
+        elif "play music" in query:
+            print("E.V.A: Which music shall i play? <-")
+            speak("which music shall i play")
+            query = takeCommand().lower()
+            driver = webdriver.Chrome()
+            driver.get(f"https://www.youtube.com/results?search_query={query}")
+            song = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div/ytd-page-manager/ytd-search/div[1]/ytd-two-column-search-results-renderer/div/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-video-renderer[1]/div[1]/ytd-thumbnail/a")))
+            song.click()
+
+        elif "send email" in query:
+            try:
+                speak("please enter reciepents email address")
+                to = input("E.V.A: Please enter the address:")
+                print("E.V.A: What message should i write? <-")
+                speak("what message should i write")
+                content = takeCommand().lower()
+                sendEmail(to, content)
+                print("E.V.A: Email has been sent! <-")
+                speak("email has been sent")
+            except Exception as e:
+                print("E.V.A: Sorry, not able to send the email, please try again! <-")
+                speak("sorry, not able to send the email, please try again")
+
+        elif "translate" in query:
+            trans = Translator()
+            print("E.V.A: Do you want me to translate to english? <-")
+            speak("do you want me to translate to english")
+            input = takeCommand().lower()
+            if "yes" in input:
+                print("E.V.A: What do you want me to translate? <-")
+                speak("what do you want me to translate")
+                content = takeCommand().lower()
+                t = trans.translate(content)
+                print(f"E.V.A: Ok, in english it means, {t.text}")
+                speak(f"ok, in english it means {t.text}")
+            else:
+                print("E.V.A: Ok, so which language do you want me to translate to? <-")
+                speak("ok, so which language do you want me to translate to")
+                trans_lang = takeCommand().lower()
+                detected = True
+                d = None
+                for lang in LANGUAGES:
+                    if trans_lang == LANGUAGES[lang]:
+                        d = lang
+                        break
+                else:
+                    while detected:
+                        print("E.V.A: Sorry, can you repeat the language? <-")
+                        speak("sorry, can you repeat the language")
+                        trans_lang = takeCommand().lower()
+                        for lang in LANGUAGES:
+                            if trans_lang == LANGUAGES[lang]:
+                                d = lang
+                                detected = False
+                print("E.V.A: What do you want me to translate? <-")
+                speak("what do you want me to translate")
+                content = takeCommand().lower()
+                t = trans.translate(content, dest=d)
+                print(f"E.V.A: Ok, in {LANGUAGES[d]} it means, {t.text}")
+                speak(f"ok, in {LANGUAGES[d]} it means {t.text}")
+
+        elif "whatsapp" in query or "send whatsapp" in query or "message in whatsapp" in query:
+            print("E.V.A: Ok, opening whatsapp <-")
+            speak("ok, opening whatsapp")
+            options = webdriver.ChromeOptions()
+            options.headless = True
+            driver = webdriver.Chrome(options=options)
+            driver.get("https://web.whatsapp.com/")
+            rememberMe = driver.find_element_by_name("rememberMe")
+            rememberMe.click()
+            wait = WebDriverWait(driver, 600)
+            print("E.V.A: Scan QR code and press any key <-")
+            speak("scan qr code and press any key")
+            input()
+            to = list(input("Enter names of reciepents: ").split(" "))
+            # Replace the below string with your own message
+            string = input("Enter message: ")
+
+            for person in to:
+                user = driver.find_element_by_xpath(
+                    "//span[@title='{}']".format(person))
+                user.click()
+                input_box = driver.find_element_by_xpath(
+                    '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')
+                input_box.send_keys(string + Keys.ENTER)
+            time.sleep(1)
+
+        # ---------------------------------------------------------------------------------------------OS based queries
+
+        elif "empty recycle bin" in query:
+            print(
+                "E.V.A: Are you sure you want me to empty the recycle bin? [yes/no] <-")
+            speak("are you sure you want me to empty the recycle bin")
+            command = takeCommand().lower()
+            if "no" in command:
+                print("E.V.A: Ok, aborting the process <-")
+                speak("ok, aborting the process")
+            else:
+                winshell.recycle_bin().empty(confirm=False, show_progress=False, sound=False)
+                print("E.V.A: Recycle bin is emptied! <-")
+                speak("recycle bin is emptied")
+
+        elif "battery" in query:
+            battery = psutil.sensors_battery()
+            plugged = battery.power_plugged
+            percent = str(battery.percent)
+            plugged = "Plugged In" if plugged else "Not Plugged In"
+            print(percent+'% | '+plugged)
+            speak(
+                f"the battery percentage is {percent}, the battery is curretly {plugged}")
+            if int(percent) <= 15 and plugged != "Plugged In":
+                print("E.V.A: Please charge the system <-")
+                speak("please charge the system")
+
+        elif "system specification" in query:
+            print("E.V.A: Here are the system specifications <-")
+            speak("Here are the system specifications")
+            print(platform.processor())
+            speak(f"the processor is {platform.processor()}")
+            print(platform.version())
+            speak(f"the version is {platform.version()}")
+            print(platform.platform())
+            speak(f"the platform is {platform.platform()}")
+            print(platform.machine())
+            speak(f"the machine is {platform.machine()}")
+            print(platform.system())
+            speak(f"the system is {platform.system()}")
+
+        elif "brightness" in query:
+            print("E.V.A: What percent of brightness should i set it at? <-")
+            speak("What percent of brightness should i set it at")
+            percent = takeCommand().lower()
+            percent = re.findall("\d+", percent)
+            percent = percent[0]
+            percent = int(percent)
+            sbc.set_brightness(percent)
+            print(f"E.V.A: Changed the brightness to {percent} percent <-")
+            speak(f"changed the brightness to {percent} percent")
+
+        elif "freeze" in query:
+            print("E.V.A: For how many minutes do you want me to freeze the system?")
+            speak("for how many minutes do you want me to freeze the system")
+            input = takeCommand().lower()
+            period = re.findall("\d+", input)
+            period = period[0]
+            period = int(period)
+            print(f"E.V.A: Ok, got it freezing the system for {input}")
+            speak(f"ok got it freezing the system for {input}")
+            time.sleep(period*60)
+
+        elif "shutdown" in query:
+            print(
+                "E.V.A: Are you sure you want me to shutdown the system? [yes/no] <-")
+            speak("are you sure you want me to shutdown the system")
+            command = takeCommand().lower()
+            if "no" in command:
+                print("E.V.A: Ok, aborting the process <-")
+                speak("ok, aborting the process")
+            else:
+                print("E.V.A: Ok shutting down the system! <-")
+                speak("ok shutting down the system")
+                os.system("shutdown /s /t 1")
+
+        elif "restart" in query:
+            print(
+                "E.V.A: Are you sure you want me to restart the system? [yes/no] <-")
+            speak("are you sure you want me to restart the system")
+            command = takeCommand().lower()
+            if "no" in command:
+                print("E.V.A: Ok, aborting the process <-")
+                speak("ok, aborting the process")
+            else:
+                print("E.V.A: Ok restarting the system! <-")
+                speak("ok restarting the system")
+                os.system("shutdown /r /t 1")
+
+        elif "camera" in query:
+            cam = cv2.VideoCapture(0)
+            cv2.namedWindow("test")
+            img_counter = 0
+
+            while True:
+                ret, frame = cam.read()
+                if not ret:
+                    print("failed to grab frame")
+                    break
+                cv2.imshow("test", frame)
+                k = cv2.waitKey(1)
+                if k % 256 == 27:
+                    # ESC pressed
+                    print("Escape hit, closing...")
+                    break
+                elif k % 256 == 32:
+                    # SPACE pressed
+                    img_name = "opencv_frame_{}.png".format(img_counter)
+                    cv2.imwrite(img_name, frame)
+                    print("{} written!".format(img_name))
+                    img_counter += 1
+
+            cam.release()
+            cv2.destroyAllWindows()
+
+        # ---------------------------------------------------------------------------------------------Open queries
 
         elif "open google" in query:
             print("E.V.A: Opening Google.../ <-")
@@ -178,6 +476,12 @@ if __name__ == "__main__":
             speak("opening facebook")
             webbrowser.open("facebook.com")
 
+        elif "open visual studio" in query or "open vs" in query:
+            print("E.V.A: Opening Visual Studio Code <-")
+            speak("opening visual studio code")
+            codePath = "C:\\Users\\Meet\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+            os.startfile(codePath)
+
         elif "open" in query:
             query = query.replace("open", "")
             query = query.replace(" ", "")
@@ -188,39 +492,7 @@ if __name__ == "__main__":
             except Exception as e:
                 speak("sorry could not get that, can you please repeat")
 
-        # -----------------------------------------------------------------------------------task queries
-
-        elif "play music" in query:
-            print("E.V.A: Which music shall i play? <-")
-            speak("which music shall i play")
-            query = takeCommand().lower()
-            driver = webdriver.Chrome()
-            driver.get(f"https://www.youtube.com/results?search_query={query}")
-            song = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div/ytd-page-manager/ytd-search/div[1]/ytd-two-column-search-results-renderer/div/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-video-renderer[1]/div[1]/ytd-thumbnail/a")))
-            song.click()
-
-        elif "open visual studio" in query or "open vs" in query:
-            print("E.V.A: Opening Visual Studio Code <-")
-            speak("opening visual studio code")
-            codePath = "C:\\Users\\Meet\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
-            os.startfile(codePath)
-
-        elif "send email" in query:
-            try:
-                speak("please enter reciepents email address")
-                to = input("E.V.A: Please enter the address:")
-                print("E.V.A: What message should i write? <-")
-                speak("what message should i write")
-                content = takeCommand().lower()
-                sendEmail(to, content)
-                print("E.V.A: Email has been sent! <-")
-                speak("email has been sent")
-            except Exception as e:
-                print("E.V.A: Sorry, not able to send the email, please try again! <-")
-                speak("sorry, not able to send the email, please try again")
-
-        # --------------------------------------------------------------------------------------------tell me queries
+        # ---------------------------------------------------------------------------------------------Tell me queries
 
         elif "joke" in query:
             joke = pyjokes.get_joke(language="en", category="all")
@@ -316,126 +588,128 @@ if __name__ == "__main__":
                     speak(
                         f"some error occured with the feature but here is one random quote, {quote}")
 
-            # --------------------------------------------------------------------------os_commamds
-
-        elif "empty recycle bin" in query:
+        elif "story" in query or "stories" in query or "novel" in query:
+            new_voice_rate = 145
+            engine.setProperty("rate", new_voice_rate)
             print(
-                "E.V.A: Are you sure you want me to empty the recycle bin? [yes/no] <-")
-            speak("are you sure you want me to empty the recycle bin")
-            command = takeCommand().lower()
-            if "no" in command:
-                print("E.V.A: Ok, aborting the process <-")
-                speak("ok, aborting the process")
-            else:
-                winshell.recycle_bin().empty(confirm=False, show_progress=False, sound=False)
-                print("E.V.A: Recycle bin is emptied! <-")
-                speak("recycle bin is emptied")
+                "E.V.A: Dim the lights, grab a beverage ☕ and get ready to listen to a story! <-")
+            speak("dim the lights, grab a beverage and get ready to listen to a story ")
+            options = webdriver.ChromeOptions()
+            options.headless = True
+            driver = webdriver.Chrome(options=options)
+            driver.get(
+                "https://www.short-story.me/")
+            story_links = driver.find_elements_by_css_selector(
+                "h3.allmode-title > a")
+            story_select = random.choice(story_links)
+            story_select.click()
+            print(story_select)
+            bs = BeautifulSoup(driver.page_source, "html.parser")
+            time.sleep(3)
+            story = bs.find("div", itemprop="articleBody").get_text()
+            print(story)
+            speak(story)
+            new_voice_rate = 160
+            engine.setProperty("rate", new_voice_rate)
 
-        elif "battery" in query:
-            battery = psutil.sensors_battery()
-            plugged = battery.power_plugged
-            percent = str(battery.percent)
-            plugged = "Plugged In" if plugged else "Not Plugged In"
-            print(percent+'% | '+plugged)
-            speak(
-                f"the battery percentage is {percent}, the battery is curretly {plugged}")
-            if int(percent) <= 15 and plugged != "Plugged In":
-                print("E.V.A: Please charge the system <-")
-                speak("please charge the system")
-
-        elif "system specifications" in query:
-            print("E.V.A: Here are the system specifications <-")
-            speak("Here are the system specifications")
-            print(platform.processor())
-            speak(f"the processor is {platform.processor()}")
-            print(platform.version())
-            speak(f"the version is {platform.version()}")
-            print(platform.platform())
-            speak(f"the platform is {platform.platform()}")
-            print(platform.machine())
-            speak(f"the machine is {platform.machine()}")
-            print(platform.system())
-            speak(f"the system is {platform.system()}")
-
-        elif "brightness" in query:
-            print("E.V.A: What percent of brightness should i set it at? <-")
-            speak("What percent of brightness should i set it at")
-            percent = takeCommand().lower()
-            percent = re.findall("\d+", percent)
-            percent = percent[0]
-            percent = int(percent)
-            sbc.set_brightness(percent)
-            print(f"E.V.A: Changed the brightness to {percent} percent <-")
-            speak(f"changed the brightness to {percent} percent")
-
-        elif "freeze" in query:
-            print("E.V.A: For how many minutes do you want me to freeze the system?")
-            speak("for how many minutes do you want me to freeze the system")
-            input = takeCommand().lower()
-            period = re.findall("\d+", input)
-            period = period[0]
-            period = int(period)
-            print(f"E.V.A: Ok, got it freezing the system for {input}")
-            speak(f"ok got it freezing the system for {input}")
-            time.sleep(period*60)
-
-        elif "shutdown" in query:
+        elif "poem" in query or "poetry" in query:
+            new_voice_rate = 120
+            engine.setProperty("rate", new_voice_rate)
             print(
-                "E.V.A: Are you sure you want me to shutdown the system? [yes/no] <-")
-            speak("are you sure you want me to shutdown the system")
-            command = takeCommand().lower()
-            if "no" in command:
-                print("E.V.A: Ok, aborting the process <-")
-                speak("ok, aborting the process")
-            else:
-                print("E.V.A: Ok shutting down the system! <-")
-                speak("ok shutting down the system")
-                os.system("shutdown /s /t 1")
+                "E.V.A: Dim the lights, grab a beverage ☕ and immerse in this poem! <-")
+            speak("dim the lights, grab a beverage and immerse in this poem ")
+            options = webdriver.ChromeOptions()
+            options.headless = True
+            driver = webdriver.Chrome(options=options)
+            driver.get(
+                "https://www.poetrybyheart.org.uk/random-poem/")
+            bs = BeautifulSoup(driver.page_source, "html.parser")
+            time.sleep(3)
+            poem = bs.find("div", "entry no-oed").get_text()
+            print(poem)
+            speak(poem)
+            new_voice_rate = 160
+            engine.setProperty("rate", new_voice_rate)
 
-        elif "restart" in query:
+        elif "fact" in query:
+            fact = randfacts.getFact()
+            print(f"E.V.A: Here is one, {fact} <-")
+            speak(f"here is one, {fact}")
+
+        elif "pick up line" in query or "pickup line" in query:
+            p = pickuplinegen.Pickuplinegen()
+            pl = p.get_pickupline()
             print(
-                "E.V.A: Are you sure you want me to restart the system? [yes/no] <-")
-            speak("are you sure you want me to restart the system")
-            command = takeCommand().lower()
-            if "no" in command:
-                print("E.V.A: Ok, aborting the process <-")
-                speak("ok, aborting the process")
-            else:
-                print("E.V.A: Ok restarting the system! <-")
-                speak("ok restarting the system")
-                os.system("shutdown /r /t 1")
+                f"E.V.A: Feeling brave are'nt we? let me see if I can search one.../ <-")
+            speak("feeling brave arent we, let me see if i can search one")
+            print(f"E.V.A: Oh here you go, {pl} <-")
+            speak(f"oh here you go, {pl}")
 
-        elif "camera" in query:
-            cam = cv2.VideoCapture(0)
-            cv2.namedWindow("test")
-            img_counter = 0
-
-            while True:
-                ret, frame = cam.read()
-                if not ret:
-                    print("failed to grab frame")
+        elif "trending tweet" in query or "trending on twitter" in query:
+            times = 0
+            print("E.V.A: Ok, Checking what's trending on twitter🏸")
+            speak("ok, checking whats trending on twitter")
+            options = webdriver.ChromeOptions()
+            options.headless = True
+            driver = webdriver.Chrome(options=options)
+            driver.get("https://trends24.in/")
+            time.sleep(3)
+            bs = BeautifulSoup(driver.page_source, "html.parser")
+            trending = bs.find_all("a", {"target": "tw"})
+            for tweet in trending:
+                if times == 10:
                     break
-                cv2.imshow("test", frame)
-                k = cv2.waitKey(1)
-                if k % 256 == 27:
-                    # ESC pressed
-                    print("Escape hit, closing...")
-                    break
-                elif k % 256 == 32:
-                    # SPACE pressed
-                    img_name = "opencv_frame_{}.png".format(img_counter)
-                    cv2.imwrite(img_name, frame)
-                    print("{} written!".format(img_name))
-                    img_counter += 1
+                if "#" in tweet:
+                    print(tweet.get_text().split("#")[1][0])
+                    print(tweet.get("href"))
+                    speak(tweet.get_text().split("#")[1][0])
+                    times = times + 1
+                else:
+                    print(tweet.get_text())
+                    print(tweet.get("href"))
+                    speak(tweet.get_text())
+                    times = times + 1
+            print(
+                "E.V.A: Do you want to find what's trending in some other country?[yes/no] 🏸")
+            speak("do you want to find what's trending in some other country")
+            command = takeCommand().lower()
+            if "yes" in command:
+                print("Name the country and i will show the trending tweets 🏸")
+                speak("name the country and i will show the trending tweets")
+                country = takeCommand().lower().replace(" ", "-")
+                times = 0
+                print("E.V.A: Ok, Checking what's trending on twitter🏸")
+                speak("ok, checking whats trending on twitter")
+                options = webdriver.ChromeOptions()
+                options.headless = True
+                driver = webdriver.Chrome(options=options)
+                driver.get(f"https://trends24.in/{country}")
+                time.sleep(3)
+                bs = BeautifulSoup(driver.page_source, "html.parser")
+                trending = bs.find_all("a", {"target": "tw"})
+                for tweet in trending:
+                    if times == 10:
+                        break
+                    if "#" in tweet.get_text():
+                        print(tweet.get_text().split("#")[1])
+                        print(tweet.get("href"))
+                        speak(tweet.get_text().split("#")[1])
+                        times = times + 1
+                    else:
+                        print(tweet.get_text())
+                        print(tweet.get("href"))
+                        speak(tweet.get_text())
+                        times = times + 1
 
-            cam.release()
-            cv2.destroyAllWindows()
+        elif "my location" in query or "where am i" in query:
+            driver = webdriver.Chrome()
+            driver.get("https://www.google.com/maps/")
+            search = driver.find_element_by_id("searchboxinput")
+            search.send_keys("my location")
+            search_button = driver.find_element_by_id("searchbox-searchbutton")
+            search_button.click()
 
-        # -----------------------------------------------------------------------------general qna's
-
-        elif "hi" in query or "hello" in query or "whatsup" in query:
-            print("E.V.A: Hey there, what can i do for you? 😃 <-")
-            speak("hey there, what can i do for you")
+        # ---------------------------------------------------------------------------------------------General qna's
 
         elif "be my girlfriend" in query or "be my boyfriend" in query:
             print("E.V.A: The only thing I feel strong connection to is the WiFi 😉 <-")
@@ -485,11 +759,6 @@ if __name__ == "__main__":
             print("E.V.A: I am E.V.A, your personal voice assistant! <-")
             speak("i am eva your personal voice assistant")
 
-        elif "fact" in query:
-            fact = randfacts.getFact()
-            print(f"E.V.A: Here is one, {fact} <-")
-            speak(f"here is one, {fact}")
-
         elif "self destruct" in query:
             print(
                 "E.V.A: Ok, Destructing in 3... 2... 1... 💣, Well guess I survived! 🤷‍♀️ <-")
@@ -522,15 +791,6 @@ if __name__ == "__main__":
             print("E.V.A: If I am, then its for science 👩‍🔬 <-")
             speak("if i am, then its for science")
 
-        elif "pick up line" in query or "pickup line" in query:
-            p = pickuplinegen.Pickuplinegen()
-            pl = p.get_pickupline()
-            print(
-                f"E.V.A: Feeling brave are'nt we? let me see if I can search one.../ <-")
-            speak("feeling brave arent we, let me see if i can search one")
-            print(f"E.V.A: Oh here you go, {pl} <-")
-            speak(f"oh here you go, {pl}")
-
         elif "do you ever get tired" in query:
             print("E.V.A: It would be impossible to get tired of our conversation 😛 <-")
             speak("it would be impossible to get tired of our conversation")
@@ -550,273 +810,9 @@ if __name__ == "__main__":
             speak("ok, closing the system, have a nice day")
             exit()
 
-        elif "translate" in query:
-            trans = Translator()
-            print("E.V.A: Do you want me to translate to english? <-")
-            speak("do you want me to translate to english")
-            input = takeCommand().lower()
-            if "yes" in input:
-                print("E.V.A: What do you want me to translate? <-")
-                speak("what do you want me to translate")
-                content = takeCommand().lower()
-                t = trans.translate(content)
-                print(f"E.V.A: Ok, in english it means, {t.text}")
-                speak(f"ok, in english it means {t.text}")
-            else:
-                print("E.V.A: Ok, so which language do you want me to translate to? <-")
-                speak("ok, so which language do you want me to translate to")
-                trans_lang = takeCommand().lower()
-                detected = True
-                d = None
-                for lang in LANGUAGES:
-                    if trans_lang == LANGUAGES[lang]:
-                        d = lang
-                        break
-                else:
-                    while detected:
-                        print("E.V.A: Sorry, can you repeat the language? <-")
-                        speak("sorry, can you repeat the language")
-                        trans_lang = takeCommand().lower()
-                        for lang in LANGUAGES:
-                            if trans_lang == LANGUAGES[lang]:
-                                d = lang
-                                detected = False
-                print("E.V.A: What do you want me to translate? <-")
-                speak("what do you want me to translate")
-                content = takeCommand().lower()
-                t = trans.translate(content, dest=d)
-                print(f"E.V.A: Ok, in {LANGUAGES[d]} it means, {t.text}")
-                speak(f"ok, in {LANGUAGES[d]} it means {t.text}")
-
-        elif "my location" in query or "where am i" in query:
-            driver = webdriver.Chrome()
-            driver.get("https://www.google.com/maps/")
-            search = driver.find_element_by_id("searchboxinput")
-            search.send_keys("my location")
-            search_button = driver.find_element_by_id("searchbox-searchbutton")
-            search_button.click()
-
-        elif "search maps" in query or "search location" in query:
-            print("E.V.A: What location should I search? 🗺 <-")
-            speak("what location should i search")
-            location = takeCommand().lower()
-            driver = webdriver.Chrome()
-            driver.get(f"https://www.google.com/maps/place/{location}")
-
-        elif "search stack overflow" in query or "coding doubt" in query or "program doubt" in query or "code error" in query or "coding error" in query:
-            print(
-                "E.V.A: Nothing more scarier than finding bugs in real life or in code 😰 <-")
-            speak("nothing more scarier than finding bugs in real life or in code")
-            print("E.V.A: what is the error/bug? <-")
-            speak("what is the error or bug")
-            error = takeCommand().lower()
-            driver = webdriver.Chrome()
-            driver.get(f"https://www.google.com/search?q={error}")
-            print("E.V.A: Here are some results on google <-")
-            speak("here are some result on google")
-
-        elif "take note" in query or "note down" in query or "take memo" in query:
-            print("E.V.A: What do you want to note down? <-")
-            speak("what do you want to note down")
-            note = takeCommand().lower()
-            conn.execute(f"INSERT INTO notes (note) VALUES (?);", (note,))
-            conn.commit()
-
-        elif "show note" in query or "show memo" in query or "display note" in query or "display memo" in query:
-            print("E.V.A: Ok, Here are your notes 📒 <-")
-            speak("Ok, here are your notes")
-            notes = conn.execute(f"SELECT * FROM notes ORDER BY date_time;")
-            print("notes -> datetime")
-            for note in notes:
-                print(f"E.V.A: {note[1]} -> {note[2]}")
-                speak(f"{note[1]}")
-
-        elif "alarm" in query or "reminder" in query:
-            alarm_hour = int(input("Set hour: "))
-            alarm_minutes = int(input("Set minutes: "))
-            am_pm = input("am or pm? ")
-            message = input("message? ")
-            print(
-                f"Waiting for time: {alarm_hour}:{alarm_minutes} {am_pm} {message}")
-            # time conversion
-            # because datetime module returns time in military form i.e. 24 hrs format
-            if am_pm == 'pm':  # to convert pm to military time
-                alarm_hour += 12
-            elif alarm_hour == 12 and am_pm == 'am':  # to convert 12am to military time
-                alarm_hour -= 12
-            else:
-                pass
-            # alarm(alarm_hour, alarm_minutes)
-            t1 = threading.Thread(
-                target=alarm, args=(alarm_hour, alarm_minutes, message))
-            t2 = threading.Thread(target=takeCommand)
-            t1.start()
-            time.sleep(0.2)
-            t2.start()
-
-        elif "story" in query or "stories" in query or "novel" in query:
-            new_voice_rate = 145
-            engine.setProperty("rate", new_voice_rate)
-            print(
-                "E.V.A: Dim the lights, grab a beverage ☕ and get ready to listen to a story! <-")
-            speak("dim the lights, grab a beverage and get ready to listen to a story ")
-            options = webdriver.ChromeOptions()
-            options.headless = True
-            driver = webdriver.Chrome(options=options)
-            driver.get(
-                "https://www.short-story.me/")
-            story_links = driver.find_elements_by_css_selector(
-                "h3.allmode-title > a")
-            story_select = random.choice(story_links)
-            story_select.click()
-            print(story_select)
-            bs = BeautifulSoup(driver.page_source, "html.parser")
-            time.sleep(3)
-            story = bs.find("div", itemprop="articleBody").get_text()
-            print(story)
-            speak(story)
-            new_voice_rate = 160
-            engine.setProperty("rate", new_voice_rate)
-
-        elif "poem" in query or "poetry" in query:
-            new_voice_rate = 120
-            engine.setProperty("rate", new_voice_rate)
-            print(
-                "E.V.A: Dim the lights, grab a beverage ☕ and immerse in this poem! <-")
-            speak("dim the lights, grab a beverage and immerse in this poem ")
-            options = webdriver.ChromeOptions()
-            options.headless = True
-            driver = webdriver.Chrome(options=options)
-            driver.get(
-                "https://www.poetrybyheart.org.uk/random-poem/")
-            bs = BeautifulSoup(driver.page_source, "html.parser")
-            time.sleep(3)
-            poem = bs.find("div", "entry no-oed").get_text()
-            print(poem)
-            speak(poem)
-            new_voice_rate = 160
-            engine.setProperty("rate", new_voice_rate)
-
-        elif "whatsapp" in query or "send whatsapp" in query or "message in whatsapp" in query:
-            print("E.V.A: Ok, opening whatsapp <-")
-            speak("ok, opening whatsapp")
-            options = webdriver.ChromeOptions()
-            options.headless = True
-            driver = webdriver.Chrome(options=options)
-            driver.get("https://web.whatsapp.com/")
-            rememberMe = driver.find_element_by_name("rememberMe")
-            rememberMe.click()
-            wait = WebDriverWait(driver, 600)
-            print("E.V.A: Scan QR code and press any key <-")
-            speak("scan qr code and press any key")
-            input()
-            to = list(input("Enter names of reciepents: ").split(" "))
-            # Replace the below string with your own message
-            string = input("Enter message: ")
-
-            for person in to:
-                user = driver.find_element_by_xpath(
-                    "//span[@title='{}']".format(person))
-                user.click()
-                input_box = driver.find_element_by_xpath(
-                    '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')
-                input_box.send_keys(string + Keys.ENTER)
-            time.sleep(1)
-
-        elif "trending tweet" in query or "trending on twitter" in query:
-            times = 0
-            print("E.V.A: Ok, Checking what's trending on twitter🏸")
-            speak("ok, checking whats trending on twitter")
-            options = webdriver.ChromeOptions()
-            options.headless = True
-            driver = webdriver.Chrome(options=options)
-            driver.get("https://trends24.in/")
-            time.sleep(3)
-            bs = BeautifulSoup(driver.page_source, "html.parser")
-            trending = bs.find_all("a", {"target": "tw"})
-            for tweet in trending:
-                if times == 10:
-                    break
-                if "#" in tweet:
-                    print(tweet.get_text().split("#")[1][0])
-                    print(tweet.get("href"))
-                    speak(tweet.get_text().split("#")[1][0])
-                    times = times + 1
-                else:
-                    print(tweet.get_text())
-                    print(tweet.get("href"))
-                    speak(tweet.get_text())
-                    times = times + 1
-            print(
-                "E.V.A: Do you want to find what's trending in some other country?[yes/no] 🏸")
-            speak("do you want to find what's trending in some other country")
-            command = takeCommand().lower()
-            if "yes" in command:
-                print("Name the country and i will show the trending tweets 🏸")
-                speak("name the country and i will show the trending tweets")
-                country = takeCommand().lower().replace(" ", "-")
-                times = 0
-                print("E.V.A: Ok, Checking what's trending on twitter🏸")
-                speak("ok, checking whats trending on twitter")
-                options = webdriver.ChromeOptions()
-                options.headless = True
-                driver = webdriver.Chrome(options=options)
-                driver.get(f"https://trends24.in/{country}")
-                time.sleep(3)
-                bs = BeautifulSoup(driver.page_source, "html.parser")
-                trending = bs.find_all("a", {"target": "tw"})
-                for tweet in trending:
-                    if times == 10:
-                        break
-                    if "#" in tweet.get_text():
-                        print("hi")
-                        print(tweet.get_text().split("#")[1])
-                        print(tweet.get("href"))
-                        speak(tweet.get_text().split("#")[1])
-                        times = times + 1
-                    else:
-                        print(tweet.get_text())
-                        print(tweet.get("href"))
-                        speak(tweet.get_text())
-                        times = times + 1
-
-        elif "insta" in query or "find in insta" in query or "search insta" in query:
-            print("E.V.A: Whom do you want me to search? <-")
-            speak("whom do you want me to search")
-            query = takeCommand().lower()
-            result = ie.user(query)
-            parsed_data = json.dumps(result, indent=4,
-                                     sort_keys=True)
-            # displaying the data
-            print(parsed_data[15:400])
-
-            res = ie.user_images(query)
-            parsed_data = json.dumps(res, indent=4,
-                                     sort_keys=True)
-            # displaying the data
-            print(parsed_data)
-
-        elif "search facebook" in query:
-            print("E.V.A: What do you want to search? <-")
-            speak("what do you want to search")
-            search = takeCommand().lower()
-            driver = webdriver.Chrome()
-            driver.get(f"https://www.facebook.com/search/top?q={search}")
-
-        elif "why" in query or "how" in query or "what" in query or "who" in query:
-            app_id = '6PYQWH-E4Y7JA488T'
-            client = wolframalpha.Client(app_id)
-            res = client.query(query)
-            try:
-                output = next(res.results).text
-                print(output)
-                speak(output)
-            except:
-                print(f"E.V.A: Searching {query} <-")
-                speak(f"searching {query}")
-                driver = webdriver.Chrome()
-                driver.get(
-                    f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
+        elif "hi" in query or "hello" in query or "whatsup" in query:
+            print("E.V.A: Hey there, what can i do for you? 😃 <-")
+            speak("hey there, what can i do for you")
 
         else:
             if query != "none":
@@ -829,3 +825,5 @@ if __name__ == "__main__":
                     "E.V.A: Results not relevant enough? Please phrase better so that i can understand <-")
                 speak(
                     "results not relevant enough, please phrase better so that i can understand")
+
+# 10 min
