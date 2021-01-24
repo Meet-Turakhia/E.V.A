@@ -1,5 +1,6 @@
 import os
 import re
+import uno
 import cv2
 import time
 import json
@@ -21,9 +22,12 @@ import wikipedia
 import threading
 import randfacts
 import webbrowser
+import platformer
 import wolframalpha
+import uno.main as unomain
 from quote import quote
 from bs4 import BeautifulSoup
+from dinogame import DinoGame
 from selenium import webdriver
 import instagram_explore as ie
 import speech_recognition as sr
@@ -243,6 +247,35 @@ if __name__ == "__main__":
             song = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div/ytd-page-manager/ytd-search/div[1]/ytd-two-column-search-results-renderer/div/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-video-renderer[1]/div[1]/ytd-thumbnail/a")))
             song.click()
+
+        elif "play game" in query or "play a game" in query or "game" in query:
+            print("E.V.A: Ok, choose which game would you like to play <-")
+            speak("ok, choose which game would you like to play")
+            print("1. dinosaurus game, 2. uno game")
+            command = takeCommand().lower()
+            if command == "none":
+                command = takeCommand().lower()
+            elif "dinosaurus game" in command:
+                game = DinoGame()
+                game.start()
+            elif "uno" in command:
+                unomain.main()
+            else:
+                print(
+                    "E.V.A: Sorry, didn't get you, here enter the game index(game number) <-")
+                speak("sorry, didn't get you, here enter the game index")
+                index = int(input("Enter index: "))
+                if index == 1:
+                    game = DinoGame()
+                    game.start()
+                elif index == 2:
+                    unomain.main()
+                else:
+                    print(
+                        "E.V.A: You selected wrong index, here's dinosaurus game for you <-")
+                    speak("you selected wrong index, here's dinosaurus game for you")
+                    game = DinoGame()
+                    game.start()
 
         elif "send email" in query:
             try:
