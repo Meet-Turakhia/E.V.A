@@ -1,6 +1,5 @@
 import os
 import re
-import uno
 import cv2
 import time
 import json
@@ -22,7 +21,6 @@ import wikipedia
 import threading
 import randfacts
 import webbrowser
-import platformer
 import wolframalpha
 import uno.main as unomain
 from quote import quote
