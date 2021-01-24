@@ -161,21 +161,6 @@ if __name__ == "__main__":
             driver = webdriver.Chrome()
             driver.get(f"https://www.facebook.com/search/top?q={search}")
 
-        elif "why" in query or "how" in query or "what" in query or "who" in query:
-            app_id = '6PYQWH-E4Y7JA488T'
-            client = wolframalpha.Client(app_id)
-            res = client.query(query)
-            try:
-                output = next(res.results).text
-                print(output)
-                speak(output)
-            except:
-                print(f"E.V.A: Searching {query} <-")
-                speak(f"searching {query}")
-                driver = webdriver.Chrome()
-                driver.get(
-                    f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
-
         elif "search maps" in query or "search location" in query:
             print("E.V.A: What location should I search? 🗺 <-")
             speak("what location should i search")
@@ -852,6 +837,23 @@ if __name__ == "__main__":
         elif "hi" in query or "hello" in query or "whatsup" in query:
             print("E.V.A: Hey there, what can i do for you? 😃 <-")
             speak("hey there, what can i do for you")
+
+        # ---------------------------------------------------------------------------------------------Back up
+
+        elif "why" in query or "how" in query or "what" in query or "who" in query:
+            app_id = '6PYQWH-E4Y7JA488T'
+            client = wolframalpha.Client(app_id)
+            res = client.query(query)
+            try:
+                output = next(res.results).text
+                print(output)
+                speak(output)
+            except:
+                print(f"E.V.A: Searching {query} <-")
+                speak(f"searching {query}")
+                driver = webdriver.Chrome()
+                driver.get(
+                    f"https://www.google.com/search?sxsrf=ALeKk024zi94E7Txq7NEzv4Ho3CBwVWelQ%3A1611481632299&source=hp&ei=IEINYMjGD66U4-EP48qk4AE&q={query}&oq=&gs_lcp=CgZwc3ktYWIQARgAMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcILhDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnMgcIIxDqAhAnUABYAGCHFmgBcAB4AIABAIgBAJIBAJgBAKoBB2d3cy13aXqwAQo&sclient=psy-ab")
 
         else:
             if query != "none":
