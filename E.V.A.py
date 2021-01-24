@@ -48,6 +48,8 @@ from bs4 import BeautifulSoup
 import random
 import keyboard
 from selenium.webdriver.common.keys import Keys
+import instascrape
+import instagram_explore as ie
 # from Riddles.riddle import riddle
 
 # p = pyaudio.PyAudio()
@@ -746,7 +748,7 @@ if __name__ == "__main__":
             print(story_select)
             bs = BeautifulSoup(driver.page_source, "html.parser")
             time.sleep(3)
-            story = bs.find("div", itemprop="articleBody")
+            story = bs.find("div", itemprop="articleBody").get_text()
             print(story)
             speak(story)
             new_voice_rate = 160
@@ -765,7 +767,7 @@ if __name__ == "__main__":
                 "https://www.poetrybyheart.org.uk/random-poem/")
             bs = BeautifulSoup(driver.page_source, "html.parser")
             time.sleep(3)
-            poem = bs.find("div", "entry no-oed")
+            poem = bs.find("div", "entry no-oed").get_text()
             print(poem)
             speak(poem)
             new_voice_rate = 160
@@ -774,7 +776,9 @@ if __name__ == "__main__":
         elif "whatsapp" in query or "send whatsapp" in query or "message in whatsapp" in query:
             print("E.V.A: Ok, opening whatsapp <-")
             speak("ok, opening whatsapp")
-            driver = webdriver.Chrome()
+            options = webdriver.ChromeOptions()
+            options.headless = True
+            driver = webdriver.Chrome(options=options)
             driver.get("https://web.whatsapp.com/")
             rememberMe = driver.find_element_by_name("rememberMe")
             rememberMe.click()
@@ -798,5 +802,105 @@ if __name__ == "__main__":
                     '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')
                 input_box.send_keys(string + Keys.ENTER)
             time.sleep(1)
+
+        elif "trending tweet" in query or "trending on twitter" in query:
+            times = 0
+            print("E.V.A: Ok, Checking what's trending on twitter🏸")
+            speak("ok, checking whats trending on twitter")
+            options = webdriver.ChromeOptions()
+            options.headless = True
+            driver = webdriver.Chrome(options=options)
+            driver.get("https://trends24.in/")
+            time.sleep(3)
+            bs = BeautifulSoup(driver.page_source, "html.parser")
+            trending = bs.find_all("a", {"target": "tw"})
+            for tweet in trending:
+                if times == 10:
+                    break
+                if "#" in tweet:
+                    print(tweet.get_text().split("#")[1][0])
+                    print(tweet.get("href"))
+                    speak(tweet.get_text().split("#")[1][0])
+                    times = times + 1
+                else:
+                    print(tweet.get_text())
+                    print(tweet.get("href"))
+                    speak(tweet.get_text())
+                    times = times + 1
+            print(
+                "E.V.A: Do you want to find what's trending in some other country?[yes/no] 🏸")
+            speak("do you want to find what's trending in some other country")
+            command = takeCommand().lower()
+            if "yes" in command:
+                print("Name the country and i will show the trending tweets 🏸")
+                speak("name the country and i will show the trending tweets")
+                country = takeCommand().lower().replace(" ", "-")
+                times = 0
+                print("E.V.A: Ok, Checking what's trending on twitter🏸")
+                speak("ok, checking whats trending on twitter")
+                options = webdriver.ChromeOptions()
+                options.headless = True
+                driver = webdriver.Chrome(options=options)
+                driver.get(f"https://trends24.in/{country}")
+                time.sleep(3)
+                bs = BeautifulSoup(driver.page_source, "html.parser")
+                trending = bs.find_all("a", {"target": "tw"})
+                for tweet in trending:
+                    if times == 10:
+                        break
+                    if "#" in tweet.get_text():
+                        print("hi")
+                        print(tweet.get_text().split("#")[1])
+                        print(tweet.get("href"))
+                        speak(tweet.get_text().split("#")[1])
+                        times = times + 1
+                    else:
+                        print(tweet.get_text())
+                        print(tweet.get("href"))
+                        speak(tweet.get_text())
+                        times = times + 1
+
+        elif "insta" in query or "find in insta" in query or "search insta" in query:
+
+            # search user name
+            result = ie.user('timesofindia')
+
+            parsed_data = json.dumps(result, indent=4,
+                                    sort_keys=True)
+
+            # displaying the data
+            print(parsed_data[15:400])
+
+            res = ie.user_images('timesofindia') 
+  
+            parsed_data = json.dumps(res, indent = 4, 
+                                    sort_keys = True) 
+            
+            # displaying the data 
+            print(parsed_data)
+
+            # options = webdriver.ChromeOptions()
+            # options.headless = True
+            # driver = webdriver.Chrome()
+            # print("E.V.A: What do you want to search, profile or hashtags? <-")
+            # speak("what do you want to search, profile or hashtags")
+            # command = takeCommand().lower()
+            # if "profile" in command:
+            #     print("E.V.A: Tell me the name of profile <-")
+            #     speak("tell me the name of profile")
+            #     profile = takeCommand().lower()
+            #     driver.get(f"https://www.instagram.com/{profile}")
+            # elif "hashtag" in command:
+            #     print("E.V.A: Tell me the hashtag <-")
+            #     speak("tell me the hashtag")
+            #     hashtag = takeCommand().lower()
+            #     driver.get(f"https://www.instagram.com/explore/tags/{hashtag}")
+
+        elif "search facebook" in query:
+            print("E.V.A: What do you want to search? <-")
+            speak("what do you want to search")
+            search = takeCommand().lower()
+            driver = webdriver.Chrome()
+            driver.get(f"https://www.facebook.com/search/top?q={search}")
 
         #
