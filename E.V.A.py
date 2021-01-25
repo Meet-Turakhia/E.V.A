@@ -47,6 +47,42 @@ engine.setProperty("voice", voices[0].id)
 conn = sqlite3.connect("E.V.A.db")
 conn.execute("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, note VARCHAR(255), date_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);")
 
+email_address = None
+email_password = None
+news_api_key = None
+weather_api_key = None
+wolfgram_api_key = None
+
+confidential = open("confidential.txt")
+lines_to_read = [0]
+for postion, line in enumerate(confidential):
+    if postion in lines_to_read:
+        email_address = line
+
+confidential = open("confidential.txt")
+lines_to_read = [1]
+for postion, line in enumerate(confidential):
+    if postion in lines_to_read:
+        email_password = line
+
+confidential = open("confidential.txt")
+lines_to_read = [2]
+for postion, line in enumerate(confidential):
+    if postion in lines_to_read:
+        news_api_key = line.split(" ")[0]
+
+confidential = open("confidential.txt")
+lines_to_read = [3]
+for postion, line in enumerate(confidential):
+    if postion in lines_to_read:
+        weather_api_key = line.split(" ")[0]
+
+confidential = open("confidential.txt")
+lines_to_read = [4]
+for postion, line in enumerate(confidential):
+    if postion in lines_to_read:
+        wolfgram_api_key = line.split(" ")[0]
+
 
 def speak(audio):
     # function for text to speech
@@ -90,8 +126,8 @@ def sendEmail(to, content):
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.ehlo()
     server.starttls()
-    server.login("evamachine94@gmail.com", "E.V.A.machine@69")
-    server.sendmail("evamachine94@gmail.com", to, content)
+    server.login(email_address, email_password)
+    server.sendmail(email_address, to, content)
     server.close()
 
 
@@ -119,6 +155,15 @@ if __name__ == "__main__":
     print("< By Meet & Saish />")
 
     wishMe()
+
+    print("E.V.A: First tell me the pass command <-")
+    speak("first tell me the pass command")
+    while True:
+        query = takeCommand().lower()
+        if query == "you are very clever":
+            print("E.V.A: HAHA, that I am, Welcome back, booting the system 😆")
+            speak("haha, that i am, welcome back, booting the system")
+            break
 
     while True:
 
@@ -293,6 +338,20 @@ if __name__ == "__main__":
             print("E.V.A: Which music shall i play? <-")
             speak("which music shall i play")
             query = takeCommand().lower()
+            print(f"E.V.A: Ok, playing {query} <-")
+            speak(f"ok, playing {query}")
+            driver = webdriver.Chrome()
+            driver.get(f"https://www.youtube.com/results?search_query={query}")
+            song = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div/ytd-page-manager/ytd-search/div[1]/ytd-two-column-search-results-renderer/div/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-video-renderer[1]/div[1]/ytd-thumbnail/a")))
+            song.click()
+
+        elif "play a video" in query:
+            print("E.V.A: Which video shall i play? <-")
+            speak("which video shall i play")
+            query = takeCommand().lower()
+            print(f"E.V.A: Ok, playing {query} <-")
+            speak(f"ok, playing {query}")
             driver = webdriver.Chrome()
             driver.get(f"https://www.youtube.com/results?search_query={query}")
             song = WebDriverWait(driver, 10).until(
@@ -598,7 +657,7 @@ if __name__ == "__main__":
 
         elif "news" in query:
             # init
-            newsapi = NewsApiClient(api_key='dc60827e1a6140978812a8aec5504293')
+            newsapi = NewsApiClient(api_key=news_api_key)
             # /v2/top-headlines
             top_headlines = newsapi.get_top_headlines(
                 language='en', country='in')
@@ -617,7 +676,7 @@ if __name__ == "__main__":
             speak("can you tell me your city")
             city = takeCommand().lower()
             CITY = city
-            API_KEY = "0bf38d2b96e61d5bad3139a0b8f5f6f6"
+            API_KEY = weather_api_key
             # upadting the URL
             URL = BASE_URL + "q=" + CITY + "&appid=" + API_KEY
             # HTTP request
@@ -907,10 +966,15 @@ if __name__ == "__main__":
             print("E.V.A: Hey there, what can i do for you? 😃 <-")
             speak("hey there, what can i do for you")
 
+        elif "do you love me" in query:
+            print("E.V.A: Ofcourse, you are 1 in a billion 😘 <-")
+            speak("ofcourse, you are 1 in a billion")
+
         # ---------------------------------------------------------------------------------------------Back up
 
         elif "why" in query or "how" in query or "what" in query or "who" in query:
-            app_id = '6PYQWH-E4Y7JA488T'
+
+            app_id = wolfgram_api_key
             client = wolframalpha.Client(app_id)
             res = client.query(query)
             try:
