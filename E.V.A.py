@@ -77,10 +77,10 @@ def wishMe():
         print("E.V.A: Good Morning! 🌄 <-")
         speak("good morning")
     elif hour >= 12 and hour < 18:
-        print("E.V.A: Good Afternoon! <-")
+        print("E.V.A: Good Afternoon! 🌇 <-")
         speak("good afternoon")
     elif hour >= 18 and hour < 21:
-        print("E.V.A: Good Evening! <-")
+        print("E.V.A: Good Evening! 🌃 <-")
         speak("good evening")
     print("E.V.A: Hello I am E.V.A, how may I help you today? <-")
     speak("hello i am eva, how may i help you today")
@@ -182,7 +182,7 @@ if __name__ == "__main__":
 
         # ---------------------------------------------------------------------------------------------task based queries
 
-        elif "take note" in query or "note down" in query or "take memo" in query or "note this down" in query:
+        elif "take note" in query or "note down" in query or "take memo" in query or "note this down" in query or "add a note" in query:
             print("E.V.A: What do you want to note down? <-")
             speak("what do you want to note down")
             note = takeCommand().lower()
@@ -648,7 +648,8 @@ if __name__ == "__main__":
                 speak(
                     f"humidity in your city is {humidity} percent")
                 speak(f"pressure in your city is {pressure} pascal")
-                speak(f"the weather in your city is {report[0]['main']}")
+                speak(
+                    f"the weather report for your city is {report[0]['main']}")
 
             else:
                 # showing the error message
