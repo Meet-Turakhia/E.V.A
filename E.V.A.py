@@ -182,21 +182,89 @@ if __name__ == "__main__":
 
         # ---------------------------------------------------------------------------------------------task based queries
 
-        elif "take note" in query or "note down" in query or "take memo" in query:
+        elif "take note" in query or "note down" in query or "take memo" in query or "note this down" in query:
             print("E.V.A: What do you want to note down? <-")
             speak("what do you want to note down")
             note = takeCommand().lower()
-            conn.execute(f"INSERT INTO notes (note) VALUES (?);", (note,))
-            conn.commit()
+            try:
+                conn.execute(f"INSERT INTO notes (note) VALUES (?);", (note,))
+                conn.commit()
+                print(f"E.V.A: Noted down, {note} successfully! <-")
+                speak(f"noted down, {note} successfully")
+            except:
+                print("E.V.A: Some error occured try again! <-")
+                speak("some error occured try again")
 
         elif "show note" in query or "show memo" in query or "display note" in query or "display memo" in query:
             print("E.V.A: Ok, Here are your notes 📒 <-")
             speak("Ok, here are your notes")
             notes = conn.execute(f"SELECT * FROM notes ORDER BY date_time;")
-            print("notes -> datetime")
+            print("index -> notes -> datetime")
             for note in notes:
-                print(f"E.V.A: {note[1]} -> {note[2]}")
+                print(f"E.V.A: {note[0]} -> {note[1]} -> {note[2]}")
                 speak(f"{note[1]}")
+
+        elif "edit note" in query or "edit memo" in query or "update note" in query or "update memo" in query or "edit a note" in query:
+            notes = conn.execute(f"SELECT * FROM notes ORDER BY date_time;")
+            print("index-> notes -> datetime")
+            for note in notes:
+                print(f"E.V.A: {note[0]} -> {note[1]} -> {note[2]}")
+            print(
+                "E.V.A: Ok, Here are all your notes, which one would you like to edit? 📒 <-")
+            speak("Ok, here are all your notes, which one would you like you edit?")
+            edit_note = takeCommand().lower()
+            notes = conn.execute(f"SELECT * FROM notes ORDER BY date_time;")
+            for note in notes:
+                if edit_note in note:
+                    print(
+                        "E.V.A: What should I edit it to? (to skip say skip) <-")
+                    speak("what should i edit it to, to skip the process say skip")
+                    edit = takeCommand().lower()
+                    if "skip" not in edit:
+                        try:
+                            notes = conn.execute(
+                                f"UPDATE notes SET note = (?) WHERE id = (?);", (edit, note[0],))
+                            conn.commit()
+                            print(
+                                f"E.V.A: Note updated successfully to {edit}! <-")
+                            speak(f"note updated successfully to {edit}")
+                        except:
+                            print("E.V.A: Some error occured try again! <-")
+                            speak("some error occured try again")
+                    else:
+                        print("E.V.A: Ok, skipping this one! <-")
+                        speak("ok, skipping this one")
+
+        elif "delete note" in query or "delete a note" in query or "delete memo" in query or "delete a memo" in query:
+            notes = conn.execute(f"SELECT * FROM notes ORDER BY date_time;")
+            print("index-> notes -> datetime")
+            for note in notes:
+                print(f"E.V.A: {note[0]} -> {note[1]} -> {note[2]}")
+            print(
+                "E.V.A: Ok, Here are all your notes, which one would you like to delete? 📒 <-")
+            speak("Ok, here are all your notes, which one would you like you delete?")
+            delete_note = takeCommand().lower()
+            notes = conn.execute(f"SELECT * FROM notes ORDER BY date_time;")
+            for note in notes:
+                if delete_note in note:
+                    print(
+                        f"E.V.A: Are you sure you want to delete {delete_note}? [yes/no] <-")
+                    speak(f"are you sure you want to delete {delete_note}")
+                    delete = takeCommand().lower()
+                    if "yes" in delete:
+                        try:
+                            notes = conn.execute(
+                                f"DELETE FROM notes WHERE id = (?);", (note[0],))
+                            conn.commit()
+                            print(
+                                f"E.V.A: {delete_note} deleted successfully! <-")
+                            speak(f"{delete_note} deleted successfully")
+                        except:
+                            print("E.V.A: Some error occured try again! <-")
+                            speak("some error occured try again")
+                    else:
+                        print("E.V.A: Ok, aborted the delete process! <-")
+                        speak("ok, aborted the delete process")
 
         elif "alarm" in query or "reminder" in query:
             alarm_hour = int(takeCommand().lower())
