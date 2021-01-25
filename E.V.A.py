@@ -312,9 +312,17 @@ if __name__ == "__main__":
                         speak("ok, aborted the delete process")
 
         elif "alarm" in query or "reminder" in query:
+            print("E.V.A: Tell me hour: <-")
+            speak("tell me hour")
             alarm_hour = int(takeCommand().lower())
+            print("Tell me minutes: <-")
+            speak("tell me minutes")
             alarm_minutes = int(takeCommand().lower())
+            print("E.V.A: am or pm? <-")
+            speak("am or pm")
             am_pm = takeCommand().lower()
+            print("E.V.A: and what message shall I add? <-")
+            speak("and what message shall i add")
             message = takeCommand().lower()
             print(
                 f"Waiting for time: {alarm_hour}:{alarm_minutes} {am_pm} {message}")
