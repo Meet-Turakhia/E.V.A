@@ -5,7 +5,7 @@ import time
 import json
 import plyer
 import psutil
-import random
+import random as selectrandom
 import pyjokes
 import sqlite3
 import pyttsx3
@@ -155,15 +155,6 @@ if __name__ == "__main__":
     print("< By Meet & Saish />")
 
     wishMe()
-
-    print("E.V.A: First tell me the pass command <-")
-    speak("first tell me the pass command")
-    while True:
-        query = takeCommand().lower()
-        if query == "you are very clever":
-            print("E.V.A: HAHA, that I am, Welcome back, booting the system 😆")
-            speak("haha, that i am, welcome back, booting the system")
-            break
 
     while True:
 
@@ -450,9 +441,7 @@ if __name__ == "__main__":
         elif "whatsapp" in query or "send whatsapp" in query or "message in whatsapp" in query:
             print("E.V.A: Ok, opening whatsapp <-")
             speak("ok, opening whatsapp")
-            options = webdriver.ChromeOptions()
-            options.headless = True
-            driver = webdriver.Chrome(options=options)
+            driver = webdriver.Chrome()
             driver.get("https://web.whatsapp.com/")
             rememberMe = driver.find_element_by_name("rememberMe")
             rememberMe.click()
@@ -761,7 +750,7 @@ if __name__ == "__main__":
                 "https://www.short-story.me/")
             story_links = driver.find_elements_by_css_selector(
                 "h3.allmode-title > a")
-            story_select = random.choice(story_links)
+            story_select = selectrandom.choice(story_links)
             story_select.click()
             print(story_select)
             bs = BeautifulSoup(driver.page_source, "html.parser")
@@ -980,7 +969,7 @@ if __name__ == "__main__":
 
         # ---------------------------------------------------------------------------------------------Back up
 
-        elif "why" in query or "how" in query or "what" in query or "who" in query:
+        elif "why" in query or "how" in query or "what" in query or "who" in query or "which" in query:
 
             app_id = wolfgram_api_key
             client = wolframalpha.Client(app_id)
